@@ -1,0 +1,501 @@
+<title>FairShare — Logo Concepts</title>
+<style>
+  :root {
+    --bg: oklch(0.985 0.002 285);
+    --surface: oklch(0.965 0.005 285);
+    --ink: oklch(0.22 0.012 285);
+    --ink-2: oklch(0.48 0.014 285);
+    --rule: oklch(0.90 0.008 285);
+    --violet: oklch(0.63 0.216 292);
+    --violet-soft: oklch(0.63 0.216 292 / 0.14);
+    --pink: oklch(0.68 0.19 340);
+    --amber: oklch(0.78 0.16 85);
+    --amber-soft: oklch(0.78 0.16 85 / 0.16);
+    --dark: oklch(0.145 0.008 285);
+    --dark-2: oklch(0.196 0.009 285);
+    --dark-ink: oklch(0.96 0.005 285);
+    --dark-ink-2: oklch(0.72 0.01 285);
+    --dark-rule: oklch(1 0 0 / 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: oklch(0.145 0.008 285);
+      --surface: oklch(0.196 0.009 285);
+      --ink: oklch(0.96 0.005 285);
+      --ink-2: oklch(0.72 0.01 285);
+      --rule: oklch(1 0 0 / 0.08);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: oklch(0.145 0.008 285);
+    --surface: oklch(0.196 0.009 285);
+    --ink: oklch(0.96 0.005 285);
+    --ink-2: oklch(0.72 0.01 285);
+    --rule: oklch(1 0 0 / 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'ss01', 'cv11';
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .page { max-width: 1180px; margin: 0 auto; padding: 64px 32px 96px; }
+
+  /* Masthead */
+  .eyebrow {
+    font: 500 0.72rem/1 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--violet); display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ''; width: 22px; height: 1px; background: currentColor; opacity: .7; }
+  h1 {
+    font: 600 clamp(2.4rem, 5vw, 3.6rem)/1.05 'Fraunces', 'Times New Roman', serif;
+    letter-spacing: -0.02em; margin: 14px 0 14px; max-width: 22ch;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--violet); font-weight: 500; }
+  .lede { color: var(--ink-2); font-size: 1.05rem; max-width: 62ch; margin: 0 0 36px; }
+
+  .tools {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    margin: 0 0 44px; padding: 12px 14px;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+    font: 500 0.8rem/1.2 'JetBrains Mono', monospace;
+  }
+  .tools .label { color: var(--ink-2); }
+  .tools button {
+    appearance: none; background: transparent; border: 1px solid var(--rule);
+    color: var(--ink); padding: 5px 10px; border-radius: 999px; cursor: pointer;
+    font: inherit;
+  }
+  .tools button[aria-pressed="true"] {
+    background: var(--violet); color: white; border-color: var(--violet);
+  }
+
+  /* Three concept bands */
+  .concept {
+    margin-top: 56px;
+    border-top: 1px solid var(--rule);
+    padding-top: 36px;
+  }
+  .concept-head {
+    display: grid; grid-template-columns: 92px 1fr; gap: 28px; align-items: start;
+    margin-bottom: 28px;
+  }
+  .num {
+    font: 500 0.72rem/1 'JetBrains Mono', monospace;
+    letter-spacing: 0.16em; color: var(--ink-2);
+    padding-top: 6px;
+  }
+  .num strong { display: block; font-size: 1.6rem; letter-spacing: -0.02em; color: var(--ink); font-family: 'Fraunces', serif; font-weight: 500; }
+  .concept h2 {
+    font: 600 1.55rem/1.15 'Fraunces', serif; letter-spacing: -0.01em;
+    margin: 0 0 6px; text-wrap: balance;
+  }
+  .concept .tag {
+    display: inline-block; font: 500 0.7rem/1 'JetBrains Mono', monospace;
+    color: var(--ink-2); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .concept p { color: var(--ink-2); margin: 6px 0 0; max-width: 64ch; }
+
+  /* The art canvas */
+  .stage {
+    margin-top: 24px;
+    background: var(--dark);
+    color: var(--dark-ink);
+    border-radius: 18px;
+    padding: 56px 40px;
+    position: relative; overflow: hidden;
+    border: 1px solid var(--dark-rule);
+  }
+  .stage::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(60rem 30rem at 12% -10%, oklch(0.63 0.216 292 / 0.20), transparent 60%),
+      radial-gradient(50rem 26rem at 95% 110%, oklch(0.68 0.19 340 / 0.14), transparent 60%);
+    pointer-events: none;
+  }
+  .stage > * { position: relative; z-index: 1; }
+
+  .scales {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px;
+    align-items: end;
+  }
+  .scale { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .scale-label {
+    font: 500 0.65rem/1 'JetBrains Mono', monospace;
+    color: var(--dark-ink-2); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .lockup {
+    width: 100%; max-width: 320px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px; border-radius: 14px;
+    background: oklch(1 0 0 / 0.04);
+    border: 1px solid oklch(1 0 0 / 0.08);
+  }
+  .lockup .mark { flex: 0 0 auto; }
+  .lockup .word {
+    font: 600 1.35rem/1 'Fraunces', serif; letter-spacing: -0.01em;
+  }
+  .lockup .word small { display: block; font: 400 0.7rem/1.2 'JetBrains Mono', monospace; color: var(--dark-ink-2); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; font-weight: 500; }
+
+  /* Mock browser tab */
+  .tab {
+    display: flex; align-items: center; gap: 8px;
+    background: oklch(0.30 0.012 285);
+    border: 1px solid oklch(1 0 0 / 0.08);
+    padding: 6px 12px 6px 8px; border-radius: 8px 8px 0 0;
+    font: 500 0.8rem/1 system-ui;
+    max-width: 220px;
+  }
+  .tab .mark { width: 16px; height: 16px; display: inline-block; }
+  .tab .url { color: var(--dark-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Favicon cell */
+  .fav {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .fav .chip {
+    background: oklch(1 0 0 / 0.06);
+    border: 1px solid oklch(1 0 0 / 0.10);
+    border-radius: 8px; padding: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fav-row { display: flex; align-items: center; gap: 10px; }
+  .fav-row .chip { padding: 6px; }
+
+  /* Section: spec strip */
+  .spec {
+    margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .spec > div {
+    border-top: 1px solid var(--dark-rule);
+    padding-top: 10px;
+    font: 400 0.78rem/1.45 'JetBrains Mono', monospace;
+    color: var(--dark-ink-2);
+  }
+  .spec b { display: block; color: var(--dark-ink); font-weight: 500; margin-bottom: 4px; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* Verdict */
+  .verdict {
+    margin-top: 56px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+    padding: 32px 36px;
+  }
+  .verdict h3 { font: 600 1.2rem/1.2 'Fraunces', serif; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .verdict table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .verdict th, .verdict td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+  .verdict th { font: 500 0.7rem/1 'JetBrains Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); font-weight: 500; }
+  .verdict td.label { font-weight: 600; }
+  .verdict .star { color: var(--violet); }
+  .verdict .pick {
+    display: inline-block; background: var(--violet); color: white; border-radius: 999px;
+    padding: 2px 10px; font: 500 0.72rem/1.4 'JetBrains Mono', monospace; letter-spacing: 0.06em;
+  }
+  .verdict p { color: var(--ink-2); margin: 14px 0 0; }
+
+  /* Footer note */
+  .foot {
+    margin-top: 40px; color: var(--ink-2); font-size: 0.85rem;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+
+  @media (max-width: 820px) {
+    .scales { grid-template-columns: 1fr 1fr; }
+    .scales .lockup { grid-column: 1 / -1; max-width: none; }
+    .concept-head { grid-template-columns: 1fr; gap: 8px; }
+    .spec { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Identity sheet · 3 concepts</div>
+  <h1>A mark for <em>FairShare</em> — the split that math vouches for.</h1>
+  <p class="lede">Three logo concepts, each rendered at the sizes a judge actually sees: 16 px in a browser tab, 28 px on a card, 64 px in the app header. Every mark is built from the same two-color vocabulary the app uses for its fairness verdict — <span style="color:var(--violet);font-weight:600">violet = envy-free</span> and <span style="color:var(--amber);font-weight:600">amber = envy by one item</span> — so the avatar and the product speak the same language.</p>
+
+  <div class="tools">
+    <span class="label">Theme</span>
+    <button data-theme-set="system" aria-pressed="true">System</button>
+    <button data-theme-set="light" aria-pressed="false">Light</button>
+    <button data-theme-set="dark" aria-pressed="false">Dark</button>
+    <span class="label" style="margin-left:8px">All stages render the dark variant by design — it is the brand ground.</span>
+  </div>
+
+  <!-- ============== CONCEPT 01 ============== -->
+  <section class="concept">
+    <div class="concept-head">
+      <div class="num"><strong>01</strong>Concept</div>
+      <div>
+        <span class="tag">The Verdict Mark</span>
+        <h2>Two circles, one item, one amber gap.</h2>
+        <p>The mark <em>is</em> an EFX verdict. Two equal circles stand for two people; a small square is the contested item; a faint amber line shows the one-item gap that math allows when an item can't be cut. Violet dominates because that is the common case — most splits are envy-free. Amber appears only on the gap edge, the same way the app's results card uses amber only on the contested cell.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="scales">
+        <div class="scale">
+          <div class="lockup">
+            <svg class="mark" width="40" height="40" viewBox="0 0 40 40" aria-label="FairShare mark">
+              <circle cx="13" cy="20" r="9" fill="oklch(0.63 0.216 292)"/>
+              <circle cx="27" cy="20" r="9" fill="oklch(0.63 0.216 292)" fill-opacity="0.55"/>
+              <rect x="18.4" y="17.4" width="3.2" height="3.2" rx="0.6" transform="rotate(45 20 19)" fill="oklch(0.78 0.16 85)"/>
+              <line x1="22" y1="20" x2="27" y2="20" stroke="oklch(0.78 0.16 85)" stroke-width="1" stroke-dasharray="1.5 1.5"/>
+            </svg>
+            <div class="word">FairShare<small>EFX · since 2026</small></div>
+          </div>
+          <div class="scale-label">App header · 40 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="tab">
+            <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="13" cy="20" r="9" fill="oklch(0.82 0.13 292)"/>
+              <circle cx="27" cy="20" r="9" fill="oklch(0.82 0.13 292)" fill-opacity="0.55"/>
+              <rect x="18.4" y="17.4" width="3.2" height="3.2" rx="0.6" transform="rotate(45 20 19)" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+            <span class="url">fairshare.app</span>
+          </div>
+          <div class="scale-label">Browser tab · 16 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="13" cy="20" r="9" fill="oklch(0.82 0.13 292)"/>
+              <circle cx="27" cy="20" r="9" fill="oklch(0.82 0.13 292)" fill-opacity="0.55"/>
+              <rect x="18.4" y="17.4" width="3.2" height="3.2" rx="0.6" transform="rotate(45 20 19)" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">28 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="13" cy="20" r="9" fill="oklch(0.82 0.13 292)"/>
+              <circle cx="27" cy="20" r="9" fill="oklch(0.82 0.13 292)" fill-opacity="0.55"/>
+              <rect x="18.4" y="17.4" width="3.2" height="3.2" rx="0.6" transform="rotate(45 20 19)" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">16 px favicon</div>
+        </div>
+      </div>
+
+      <div class="spec">
+        <div><b>Reads as</b>Two equal shares + one contested item</div>
+        <div><b>Color count</b>2 — violet, amber (both from app tokens)</div>
+        <div><b>16 px legibility</b>Strong · 3 elements only</div>
+        <div><b>Risk</b>Squares inside circles may look generic without wordmark</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CONCEPT 02 ============== -->
+  <section class="concept">
+    <div class="concept-head">
+      <div class="num"><strong>02</strong>Concept</div>
+      <div>
+        <span class="tag">The Honest Split</span>
+        <h2>A single bar, divided, with one amber cell.</h2>
+        <p>The mark is the result table from the results screen — one horizontal bar partitioned by the actual share, plus a small amber cell where envy survives. Reads as <em>"this is the split we computed."</em> The bar form survives any size: at 16 px it still reads as a divided line, at 64 px the amber cell becomes the focal point.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="scales">
+        <div class="scale">
+          <div class="lockup">
+            <svg class="mark" width="40" height="40" viewBox="0 0 40 40" aria-label="FairShare mark">
+              <rect x="4" y="16" width="14" height="8" rx="2" fill="oklch(0.63 0.216 292)"/>
+              <rect x="19" y="16" width="11" height="8" rx="2" fill="oklch(0.63 0.216 292)" fill-opacity="0.6"/>
+              <rect x="31" y="16" width="5" height="8" rx="2" fill="oklch(0.78 0.16 85)"/>
+              <line x1="4" y1="28" x2="36" y2="28" stroke="oklch(1 0 0 / 0.25)" stroke-width="0.6"/>
+            </svg>
+            <div class="word">FairShare<small>EFX · since 2026</small></div>
+          </div>
+          <div class="scale-label">App header · 40 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="tab">
+            <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+              <rect x="4" y="16" width="14" height="8" rx="2" fill="oklch(0.82 0.13 292)"/>
+              <rect x="19" y="16" width="11" height="8" rx="2" fill="oklch(0.82 0.13 292)" fill-opacity="0.6"/>
+              <rect x="31" y="16" width="5" height="8" rx="2" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+            <span class="url">fairshare.app</span>
+          </div>
+          <div class="scale-label">Browser tab · 16 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 40 40" aria-hidden="true">
+              <rect x="4" y="16" width="14" height="8" rx="2" fill="oklch(0.82 0.13 292)"/>
+              <rect x="19" y="16" width="11" height="8" rx="2" fill="oklch(0.82 0.13 292)" fill-opacity="0.6"/>
+              <rect x="31" y="16" width="5" height="8" rx="2" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">28 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 40 40" aria-hidden="true">
+              <rect x="4" y="16" width="14" height="8" rx="1.5" fill="oklch(0.82 0.13 292)"/>
+              <rect x="19" y="16" width="11" height="8" rx="1.5" fill="oklch(0.82 0.13 292)" fill-opacity="0.6"/>
+              <rect x="31" y="16" width="5" height="8" rx="1.5" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">16 px favicon</div>
+        </div>
+      </div>
+
+      <div class="spec">
+        <div><b>Reads as</b>A divided bar with one contested cell</div>
+        <div><b>Color count</b>2 — violet, amber (both from app tokens)</div>
+        <div><b>16 px legibility</b>Strongest — flat horizontal reads at any size</div>
+        <div><b>Risk</b>Could read as a generic progress bar without context</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CONCEPT 03 ============== -->
+  <section class="concept">
+    <div class="concept-head">
+      <div class="num"><strong>03</strong>Concept</div>
+      <div>
+        <span class="tag">The F Mark</span>
+        <h2>An F that splits itself in two.</h2>
+        <p>The boldest of the three: a custom-drawn letter F whose horizontal arms separate into two equal stacks — the top arm shows two violet bars (one wanted, one got), the bottom arm is a single amber bar (the one-item gap). It is the most "logo-shaped" of the three and works as a real wordmark. At 16 px the F + amber dot alone carry the brand.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="scales">
+        <div class="scale">
+          <div class="lockup">
+            <svg class="mark" width="40" height="40" viewBox="0 0 40 40" aria-label="FairShare mark">
+              <path d="M9 7 L9 33 L13 33 L13 22 L23 22 L23 18 L13 18 L13 11 L26 11 L26 7 Z" fill="oklch(0.63 0.216 292)"/>
+              <rect x="20" y="26" width="11" height="3.2" rx="1.2" fill="oklch(0.78 0.16 85)"/>
+            </svg>
+            <div class="word">FairShare<small>EFX · since 2026</small></div>
+          </div>
+          <div class="scale-label">App header · 40 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="tab">
+            <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M9 7 L9 33 L13 33 L13 22 L23 22 L23 18 L13 18 L13 11 L26 11 L26 7 Z" fill="oklch(0.82 0.13 292)"/>
+              <rect x="20" y="26" width="11" height="3.2" rx="1.2" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+            <span class="url">fairshare.app</span>
+          </div>
+          <div class="scale-label">Browser tab · 16 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M9 7 L9 33 L13 33 L13 22 L23 22 L23 18 L13 18 L13 11 L26 11 L26 7 Z" fill="oklch(0.82 0.13 292)"/>
+              <rect x="20" y="26" width="11" height="3.2" rx="1.2" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">28 px</div>
+        </div>
+
+        <div class="scale">
+          <div class="fav"><div class="chip" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M9 7 L9 33 L13 33 L13 22 L23 22 L23 18 L13 18 L13 11 L26 11 L26 7 Z" fill="oklch(0.82 0.13 292)"/>
+              <rect x="20" y="26" width="11" height="3.2" rx="1.2" fill="oklch(0.85 0.16 85)"/>
+            </svg>
+          </div></div>
+          <div class="scale-label">16 px favicon</div>
+        </div>
+      </div>
+
+      <div class="spec">
+        <div><b>Reads as</b>F + amber counter (the contested cell)</div>
+        <div><b>Color count</b>2 — violet, amber (both from app tokens)</div>
+        <div><b>16 px legibility</b>Strongest letter-mark · amber dot is the hook</div>
+        <div><b>Risk</b>More custom drawing; harder to redraw than the first two</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== VERDICT ============== -->
+  <section class="verdict">
+    <h3>So which one and why</h3>
+    <table>
+      <thead>
+        <tr><th>Concept</th><th>Honesty</th><th>Distinctiveness</th><th>Tab legibility</th><th>App fit</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label">01 · Verdict Mark</td>
+          <td>★★★★★ math is the picture</td>
+          <td>★★★★☆ distinctive, not stock</td>
+          <td>★★★★★ three shapes only</td>
+          <td>★★★★★ directly the verdict badge</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="label">02 · Honest Split</td>
+          <td>★★★★★ the result bar IS the result</td>
+          <td>★★★☆☆ could read as a progress bar</td>
+          <td>★★★★★ flat horizontal survives any size</td>
+          <td>★★★★☆ strong, slightly generic</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="label">03 · F Mark</td>
+          <td>★★★★☆ narrative, less direct</td>
+          <td>★★★★★ most "logo-like" of the three</td>
+          <td>★★★★☆ needs the amber dot to register</td>
+          <td>★★★★★ wordmark, hero friendly</td>
+          <td><span class="pick">Recommended</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>My pick is 03 — the F Mark</b> — because the judging is by a panel that will spend 3–5 seconds on the avatar before reading anything. A letter-mark with a clear amber accent reads as "this is a real product" instantly, and the amber cell next to the F quietly echoes the same amber cell that appears on every EFX result. 01 is the most semantically pure; 02 is the most literal; 03 is the one I'd bet on if I were the entry. Tell me which way you lean and I'll draw the chosen one at full scale and wire it into <code>public/favicon.svg</code>.</p>
+  </section>
+
+  <div class="foot">
+    <span>Concepts drawn in violet <code>oklch(0.63 0.216 292)</code> and amber <code>oklch(0.78 0.16 85)</code> — the same tokens the app uses.</span>
+    <span>Type · Fraunces (display) + Inter (UI) + JetBrains Mono (labels)</span>
+  </div>
+</div>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script>
+  // Theme switcher (three-state: system / light / dark)
+  const root = document.documentElement;
+  const KEY = 'fairshare-logo-sheet-theme';
+  const buttons = document.querySelectorAll('[data-theme-set]');
+  function apply(mode) {
+    if (mode === 'light') { root.setAttribute('data-theme', 'light'); }
+    else if (mode === 'dark') { root.setAttribute('data-theme', 'dark'); }
+    else { root.removeAttribute('data-theme'); }
+    try { localStorage.setItem(KEY, mode); } catch {}
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === mode)));
+  }
+  let saved = 'system';
+  try { saved = localStorage.getItem(KEY) || 'system'; } catch {}
+  apply(saved);
+  buttons.forEach(b => b.addEventListener('click', () => apply(b.dataset.themeSet)));
+</script>
