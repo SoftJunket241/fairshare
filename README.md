@@ -140,10 +140,11 @@ keeps ballots in memory only.
   `!("wants" in parsed)`. If the wants matrix ever leaks to storage, the
   test goes red.
 
-## Under the hood
+## For the technically curious
 
-The details below are for the technically curious. Nothing above depends
-on them.
+Everything above works without knowing any of this. But if you want to
+check the machinery — the citations, the algorithm, the proofs behind each
+promise — it's all below.
 
 **The result being used.** For *dichotomous* (binary) valuations — every
 item either wanted or not — Babaioff, Ezra & Feige (2020), *Fair and
@@ -169,10 +170,11 @@ optimal semi-matching technique of Harvey et al.:
 
 **The verifier.** `verify()` is independent of `allocate()`: given the
 wants matrix and the allocation, it recomputes every utility, every envy
-entry, and every aggregate (`isEF`, `isEFX`, Nash welfare, utilitarian,
-worst-off) from scratch. It has the shape of a cryptographic witness —
-except the witness is recomputation, not a SNARK. The app's fairness
-claims are checkable arithmetic built into the product, not marketing.
+entry, and every aggregate from scratch. In the UI, this is the fairness
+check — the piece that re-derives, for every pair of roommates, the answer
+to *"if you swapped shares, would you actually receive more of the things
+you wanted?"* Nothing about the result is taken on trust; every number
+shown is recomputed from the ballots.
 
 **Cash settlement.** `settle()` inspects the contested edges the verifier
 flags. For each edge where the envier is the **sole** wanter of every

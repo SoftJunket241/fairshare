@@ -72,6 +72,8 @@ type StringDict = {
   moneyRecalc: string
   moneyNone: string
   moneyNote: string
+  priceSheetHint: string
+  priceSheetClose: string
   moneyTransferLabel: (a: string, b: string) => string
   moneyAfter: string
   moneyStillContested: string
@@ -210,6 +212,9 @@ export const STRINGS: Record<Lang, StringDict> = {
     moneyNone: "Chưa có món nào thoả điều kiện đền bù (chỉ đền khi có đúng một người muốn món đó).",
     moneyNote:
       "Các món đang tranh chấp được viền vàng. Giá nên chốt cùng nhau trước khi chia để không ai được lợi từ việc khai sai muốn. Với món chỉ một người muốn, người kia nhận nửa giá — một bên giữ đồ, một bên giữ tiền, ngang bằng. Không phải mọi món đều có thể đền bằng tiền; kết quả cuối nói thật điều đó.",
+    priceSheetHint:
+      "Mở nếu có khả năng sẽ tranh chấp. Cả nhà cùng chốt giá tham khảo cho từng món NGAY BÂY GIỜ, trước khi bỏ phiếu — vì giá chốt sau khi biết ai ghen ai sẽ mở cửa cho khai sai muốn. Bỏ trống cũng được; bạn có thể quay lại bước này bất cứ lúc nào.",
+    priceSheetClose: "Đóng bảng giá",
     moneyTransferLabel: (a: string, b: string) => `${a} trả ${b}`,
     moneyAfter: "Sau khi đền bù:",
     moneyStillContested: "Vẫn còn ghen tị — tăng giá món tranh chấp hoặc dùng đồng xu.",
@@ -365,6 +370,9 @@ export const STRINGS: Record<Lang, StringDict> = {
     moneyNone: "Nothing qualifies for a cash settlement here (cash only applies when exactly one person wanted the item).",
     moneyNote:
       "Contested items are ringed in amber. Agree on prices together, before voting, so nobody can game a ballot. For an item only one person wanted, the other side receives half its price — one keeps the item, one keeps the money, and the two come out even. Not everything can be settled with cash; the final line says so honestly.",
+    priceSheetHint:
+      "Open this if a dispute is likely. Agree on a reference price for each item NOW, before anyone votes — prices set after you know who envies whom would open the door to strategic ballots. Leaving it empty is fine; you can come back to this step at any time.",
+    priceSheetClose: "Close the price sheet",
     moneyTransferLabel: (a: string, b: string) => `${a} pays ${b}`,
     moneyAfter: "After settlement:",
     moneyStillContested: "Envy remains — raise the price on contested items, or coin-flip.",

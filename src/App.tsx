@@ -137,6 +137,9 @@ export default function App() {
   const [voterIdx, setVoterIdx] = useState(0)
   const [handoff, setHandoff] = useState(true)
 
+  const [prices, setPrices] = useState<number[]>([])
+  const [pricesOn, setPricesOn] = useState(false)
+
   const [result, setResult] = useState<{
     people: string[]
     items: string[]
@@ -152,6 +155,7 @@ export default function App() {
   }, [])
 
   useEffect(() => { saveSetup(people, items) }, [people, items])
+  useEffect(() => { setPrices((prev) => items.map((_, i) => prev[i] ?? 0)) }, [items])
   useEffect(() => { setLang(lang) }, [lang])
   useEffect(() => {
     applyTheme(theme)
@@ -253,6 +257,10 @@ export default function App() {
               setItems([...PRESETS[p].items])
             }}
             canStart={canStart}
+            prices={prices}
+            setPrices={setPrices}
+            pricesOn={pricesOn}
+            setPricesOn={setPricesOn}
             onStart={startVoting}
             t={t}
           />
@@ -276,6 +284,7 @@ export default function App() {
             data={result}
             onReVote={startVoting}
             onStartOver={startOver}
+            prices={prices}
             t={t}
             lang={lang}
           />
@@ -432,6 +441,10 @@ function Setup(props: {
   removeItem: (i: number) => void
   loadPreset: (p: keyof typeof PRESETS) => void
   canStart: boolean
+  prices: number[]
+  setPrices: (n: number[]) => void
+  pricesOn: boolean
+  setPricesOn: (b: boolean) => void
   onStart: () => void
   t: typeof STRINGS.vi
 }) {
@@ -521,6 +534,15 @@ function Setup(props: {
         </CardContent>
       </Card>
 
+      <PriceSheetCard
+        items={props.items}
+        prices={props.prices}
+        setPrices={props.setPrices}
+        pricesOn={props.pricesOn}
+        setPricesOn={props.setPricesOn}
+        t={t}
+      />
+
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button variant="ghost" onClick={() => props.loadPreset("roommates")}>
           {t.trySample}
@@ -534,6 +556,81 @@ function Setup(props: {
         </Button>
       </div>
     </div>
+  )
+}
+
+function PriceSheetCard({
+  items,
+  prices,
+  setPrices,
+  pricesOn,
+  setPricesOn,
+  t,
+}: {
+  items: string[]
+  prices: number[]
+  setPrices: (n: number[]) => void
+  pricesOn: boolean
+  setPricesOn: (b: boolean) => void
+  t: typeof STRINGS.vi
+}) {
+  if (items.length === 0) return null
+  const filled = prices.filter((p) => p > 0).length
+
+  return (
+    <Card className="glass">
+      <CardHeader>
+        <CardTitle className="text-base">{t.moneyTitle}</CardTitle>
+        <CardDescription>{t.moneyDesc}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
+          {t.priceSheetHint}
+        </p>
+        {!pricesOn ? (
+          <Button variant="outline" size="sm" onClick={() => setPricesOn(true)}>
+            {t.moneyAdd}
+            {filled > 0 ? ` · ${filled}/${items.length}` : ""}
+          </Button>
+        ) : (
+          <>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {items.map((it, i) => (
+                <label
+                  key={i}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-sm transition-colors"
+                >
+                  <span className="truncate">{it}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={prices[i] ?? 0}
+                      onChange={(e) => {
+                        const next = prices.slice()
+                        next[i] = Math.max(0, Number(e.target.value) || 0)
+                        setPrices(next)
+                      }}
+                      className="w-20 rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-right text-sm outline-none focus:border-violet-400/60"
+                    />
+                  </div>
+                </label>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs text-muted-foreground">
+                {filled}/{items.length}
+              </span>
+              <Button variant="ghost" size="sm" onClick={() => setPricesOn(false)}>
+                {t.priceSheetClose}
+              </Button>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -678,6 +775,7 @@ function Results({
   data,
   onReVote,
   onStartOver,
+  prices,
   t,
   lang,
 }: {
@@ -690,6 +788,7 @@ function Results({
   }
   onReVote: () => void
   onStartOver: () => void
+  prices: number[]
   t: typeof STRINGS.vi
   lang: Lang
 }) {
@@ -719,10 +818,7 @@ function Results({
 
   const gotSomething = v.utilities.filter((u) => u > 0).length
 
-  const [prices, setPrices] = useState<number[]>(() => items.map(() => 0))
-  const [pricesOn, setPricesOn] = useState(false)
   const [settleResult, setSettleResult] = useState<SettleResult | null>(null)
-  useEffect(() => { setPrices(items.map(() => 0)); setPricesOn(false); setSettleResult(null) }, [items.length])
 
   function copyResult() {
     let txt = `${t.copyHeader}\n\n`
@@ -797,7 +893,7 @@ function Results({
                         <span className="font-bold text-emerald-400">✓</span>
                         {items[i]}
                       </span>
-                      {pricesOn && (
+                      {(prices[i] ?? 0) > 0 && (
                         <span className="text-xs text-muted-foreground">
                           ${(prices[i] ?? 0).toFixed(0)}
                         </span>
@@ -861,9 +957,6 @@ function Results({
         items={items}
         allContested={allContested}
         prices={prices}
-        setPrices={setPrices}
-        pricesOn={pricesOn}
-        setPricesOn={setPricesOn}
         settleResult={settleResult}
         setSettleResult={setSettleResult}
         people={people}
@@ -1041,9 +1134,6 @@ function MoneyCard(props: {
   items: string[]
   allContested: { envier: number; envied: number; item: number }[]
   prices: number[]
-  setPrices: (n: number[]) => void
-  pricesOn: boolean
-  setPricesOn: (b: boolean) => void
   settleResult: SettleResult | null
   setSettleResult: (r: SettleResult | null) => void
   people: string[]
@@ -1053,24 +1143,9 @@ function MoneyCard(props: {
   t: typeof STRINGS.vi
   lang: Lang
 }) {
-  const { t, items, prices, allContested, pricesOn, settleResult } = props
+  const { t, items, prices, allContested, settleResult } = props
   const contestedSet = new Set(allContested.map((c) => c.item))
-
-  if (!pricesOn) {
-    return (
-      <Card className="glass">
-        <CardHeader>
-          <CardTitle className="text-base">{t.moneyTitle}</CardTitle>
-          <CardDescription>{t.moneyDesc}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button variant="outline" size="sm" onClick={() => props.setPricesOn(true)}>
-            {t.moneyAdd}
-          </Button>
-        </CardContent>
-      </Card>
-    )
-  }
+  const anyPriced = prices.some((p) => p > 0)
 
   function calc() {
     const r = settle(
@@ -1091,48 +1166,43 @@ function MoneyCard(props: {
         <CardDescription>{t.moneyDesc}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
-          {props.lang === "vi"
-            ? "Cùng nhau chốt giá tham khảo cho từng món TRƯỚC khi chia — món đang tranh chấp được viền vàng. Chốt giá sau khi biết ai ghen ai sẽ mở cửa cho khai sai muốn."
-            : "Agree on a reference price for each item TOGETHER, BEFORE the split runs — contested items are ringed in amber. Setting prices after you know who envies whom would open the door to strategic ballots."}
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {items.map((it, i) => (
-            <label
-              key={i}
-              className={
-                "flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-sm transition-colors " +
-                (contestedSet.has(i) ? "ring-1 ring-inset ring-amber-400/30" : "")
-              }
-            >
-              <span className="truncate">{it}</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">$</span>
-                <input
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={prices[i] ?? 0}
-                  onChange={(e) => {
-                    const next = prices.slice()
-                    next[i] = Math.max(0, Number(e.target.value) || 0)
-                    props.setPrices(next)
-                  }}
-                  className="w-20 rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-right text-sm outline-none focus:border-violet-400/60"
-                />
-              </div>
-            </label>
-          ))}
-        </div>
+        {!anyPriced ? (
+          <p className="text-sm text-muted-foreground">
+            {props.lang === "vi"
+              ? "Chưa chốt giá ở màn hình thiết lập — không tính được đền bù. Quay lại bước 1, cùng nhau nhập giá rồi bỏ phiếu lại."
+              : "No prices were agreed on the setup screen — no settlement can be computed. Go back to step 1, agree on prices together, and vote again."}
+          </p>
+        ) : (
+          <>
+            <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
+              {props.lang === "vi"
+                ? "Giá này cả nhà đã chốt ở bước 1, trước khi bỏ phiếu — nên không ai được lợi từ việc khai sai muốn. Món đang tranh chấp được viền vàng."
+                : "These prices were agreed by everyone at step 1, before voting — so nobody can gain from a strategic ballot. Contested items are ringed in amber."}
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {items.map((it, i) => (
+                <div
+                  key={i}
+                  className={
+                    "flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-sm transition-colors " +
+                    (contestedSet.has(i) ? "ring-1 ring-inset ring-amber-400/30" : "")
+                  }
+                >
+                  <span className="truncate">{it}</span>
+                  <span className="font-mono text-muted-foreground">
+                    ${(prices[i] ?? 0).toFixed(0)}
+                  </span>
+                </div>
+              ))}
+            </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={() => { props.setSettleResult(null); props.setPrices(items.map(() => 0)) }}>
-            {props.lang === "vi" ? "Xoá" : "Clear"}
-          </Button>
-          <Button size="sm" className="btn-glow text-white" onClick={calc}>
-            {settleResult ? t.moneyRecalc : t.moneyCalc}
-          </Button>
-        </div>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <Button size="sm" className="btn-glow text-white" onClick={calc}>
+                {settleResult ? t.moneyRecalc : t.moneyCalc}
+              </Button>
+            </div>
+          </>
+        )}
 
         {settleResult && (
           <div className="space-y-3 rounded-lg border border-violet-400/20 bg-violet-500/5 p-4">
