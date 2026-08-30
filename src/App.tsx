@@ -1091,6 +1091,11 @@ function MoneyCard(props: {
         <CardDescription>{t.moneyDesc}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
+          {props.lang === "vi"
+            ? "Cùng nhau chốt giá tham khảo cho từng món TRƯỚC khi chia — món đang tranh chấp được viền vàng. Chốt giá sau khi biết ai ghen ai sẽ mở cửa cho khai sai muốn."
+            : "Agree on a reference price for each item TOGETHER, BEFORE the split runs — contested items are ringed in amber. Setting prices after you know who envies whom would open the door to strategic ballots."}
+        </p>
         <div className="grid gap-2 sm:grid-cols-2">
           {items.map((it, i) => (
             <label

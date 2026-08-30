@@ -140,9 +140,10 @@ export const STRINGS: Record<Lang, StringDict> = {
     fairnessCheck: "🔎 Kiểm tra công bằng",
     fairnessCheckDesc: "tính lại từ kết quả thực tế",
     fairnessHint:
-      "Chúng tôi không yêu cầu bạn tin. Bảng này tính lại trực tiếp từ phiếu của mọi người: với mỗi người, phần của họ so với phần người khác nhận ra sao.",
-    legendGreen: "ô xanh nghĩa là “không ghen tị”.",
-    legendAmber: "ô vàng nghĩa là “ghen tị đúng một món” — giới hạn toán học khi đồ không cắt đôi được.",
+      "Bảng này trả lời một câu hỏi: nếu bạn đổi phần của mình với bất kỳ ai khác, bạn có thực sự được hơn không? Ô xanh nghĩa là không — bạn đang ổn với phần mình.",
+    legendGreen: "Màu xanh = không ghen tị.",
+    legendAmber:
+      "Màu vàng = ghen tị đúng một món — chênh lệch thuộc về một món không thể cắt đôi; nếu bỏ món đó ra, bạn ngang hoặc hơn.",
     colHeader: "↓ người nhìn / chia →",
     efNote: (
       <>
@@ -201,14 +202,14 @@ export const STRINGS: Record<Lang, StringDict> = {
     presetTrip: "Sau chuyển đi",
     presetClub: "CLB cuối năm",
 
-    moneyTitle: "💸 Đóng khoảng cách bằng tiền",
-    moneyDesc: "nhập giá thị trường tham khảo để đền bù cho người bị thiệt",
-    moneyAdd: "+ Thêm cột giá",
+    moneyTitle: "💸 Đền bù món tranh chấp",
+    moneyDesc: "giá do cả nhà cùng nhập, trước khi bấm chia — không phải do một người tự quyết",
+    moneyAdd: "+ Mở bảng giá",
     moneyCalc: "Tính đền bù",
     moneyRecalc: "Tính lại",
-    moneyNone: "Đánh dấu giá cho các món tranh chấp rồi bấm “Tính đền bù”.",
+    moneyNone: "Chưa có món nào thoả điều kiện đền bù (chỉ đền khi có đúng một người muốn món đó).",
     moneyNote:
-      "Lưu ý trung thực: giá bạn nhập là tham khảo thị trường, không phải giá trị thật trong đầu mỗi người. Hệ thống dùng nó như proxy để xem tiền có thu hẹp ghen tị tới đâu — và chỉ coi envier (người cảm thấy bị thiệt) là người được lợi từ tiền đền bù.",
+      "Các món đang tranh chấp được viền vàng. Giá nên chốt cùng nhau trước khi chia để không ai được lợi từ việc khai sai muốn. Với món chỉ một người muốn, người kia nhận nửa giá — một bên giữ đồ, một bên giữ tiền, ngang bằng. Không phải mọi món đều có thể đền bằng tiền; kết quả cuối nói thật điều đó.",
     moneyTransferLabel: (a: string, b: string) => `${a} trả ${b}`,
     moneyAfter: "Sau khi đền bù:",
     moneyStillContested: "Vẫn còn ghen tị — tăng giá món tranh chấp hoặc dùng đồng xu.",
@@ -289,10 +290,10 @@ export const STRINGS: Record<Lang, StringDict> = {
     fairnessCheck: "🔎 The fairness check",
     fairnessCheckDesc: "computed from the actual result",
     fairnessHint:
-      "We don't ask you to trust us. This table is recomputed directly from everyone's votes: for each person, how their share compares to what they think everyone else got.",
-    legendGreen: "A green cell means “no envy.”",
+      "This table answers one question: if you swapped your share with anyone else, would you actually be better off? A green cell means no — you're doing fine with what you have.",
+    legendGreen: "Green = no envy.",
     legendAmber:
-      "An amber cell means “envies by one item” — the mathematical best possible when an item can't be cut in half.",
+      "Amber = envies by one item — the entire gap belongs to a single item that couldn't be cut in half; remove it and you're even or ahead.",
     colHeader: "sees ↓ / share →",
     efNote: (
       <>
@@ -356,14 +357,14 @@ export const STRINGS: Record<Lang, StringDict> = {
     presetTrip: "After a trip",
     presetClub: "Year-end club",
 
-    moneyTitle: "💸 Close the last gap with cash",
-    moneyDesc: "enter reference market prices to settle the envier's gap",
-    moneyAdd: "+ Add prices",
+    moneyTitle: "💸 Settle contested items",
+    moneyDesc: "prices the whole household agrees on, entered before the split runs — never decided by one person",
+    moneyAdd: "+ Open the price sheet",
     moneyCalc: "Settle",
     moneyRecalc: "Recalculate",
-    moneyNone: "Set a price for each contested item, then press “Settle”.",
+    moneyNone: "Nothing qualifies for a cash settlement here (cash only applies when exactly one person wanted the item).",
     moneyNote:
-      "Honest note: the prices you enter are market references, not the value in each person's head. We use them as a proxy to show how far cash can close the gap — and we only credit the envier (the one who feels short-changed), not everyone.",
+      "Contested items are ringed in amber. Agree on prices together, before voting, so nobody can game a ballot. For an item only one person wanted, the other side receives half its price — one keeps the item, one keeps the money, and the two come out even. Not everything can be settled with cash; the final line says so honestly.",
     moneyTransferLabel: (a: string, b: string) => `${a} pays ${b}`,
     moneyAfter: "After settlement:",
     moneyStillContested: "Envy remains — raise the price on contested items, or coin-flip.",
