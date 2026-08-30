@@ -86,6 +86,28 @@ const PRESETS = {
 } as const
 
 type Screen = "setup" | "vote" | "results"
+type Theme = "light" | "dark"
+
+function detectTheme(): Theme {
+  if (typeof window === "undefined") return "dark"
+  try {
+    const saved = localStorage.getItem("fairshare-theme") as Theme | null
+    if (saved === "light" || saved === "dark") return saved
+  } catch { }
+  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark"
+}
+
+function applyTheme(theme: Theme) {
+  try {
+    const root = document.documentElement
+    if (theme === "dark") root.classList.add("dark")
+    else root.classList.remove("dark")
+  } catch { }
+}
+
+function saveTheme(theme: Theme) {
+  try { localStorage.setItem("fairshare-theme", theme) } catch { }
+}
 
 function saveSetup(people: string[], items: string[]) {
   try {
@@ -104,6 +126,7 @@ function loadSetup(): { people: string[]; items: string[] } {
 export default function App() {
   const [lang, setLangState] = useState<Lang>(() => detectLang())
   const t = STRINGS[lang]
+  const [theme, setThemeState] = useState<Theme>(() => detectTheme())
   const [screen, setScreen] = useState<Screen>("setup")
   const [people, setPeople] = useState<string[]>([])
   const [items, setItems] = useState<string[]>([])
@@ -130,6 +153,11 @@ export default function App() {
 
   useEffect(() => { saveSetup(people, items) }, [people, items])
   useEffect(() => { setLang(lang) }, [lang])
+  useEffect(() => { applyTheme(theme); saveTheme(theme) }, [theme])
+
+  function toggleTheme() {
+    setThemeState((prev) => (prev === "dark" ? "light" : "dark"))
+  }
 
   const canStart = people.length >= 2 && items.length >= 1
 
@@ -194,7 +222,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-5 pb-24">
-        <TopBar screen={screen} lang={lang} onLang={setLangState} t={t} />
+        <TopBar screen={screen} lang={lang} onLang={setLangState} theme={theme} onTheme={toggleTheme} t={t} />
         {screen === "setup" && (
           <Setup
             people={people}
@@ -265,11 +293,15 @@ function TopBar({
   screen,
   lang,
   onLang,
+  theme,
+  onTheme,
   t,
 }: {
   screen: Screen
   lang: Lang
   onLang: (l: Lang) => void
+  theme: Theme
+  onTheme: () => void
   t: typeof STRINGS.vi
 }) {
   const order: Screen[] = ["setup", "vote", "results"]
@@ -312,6 +344,14 @@ function TopBar({
             EN
           </button>
         </div>
+        <button
+          onClick={onTheme}
+          className="grid size-7 place-items-center rounded-md border border-white/10 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          title={theme === "dark" ? "Chế độ sáng" : "Chế độ tối"}
+        >
+          {theme === "dark" ? "☾" : "☀"}
+        </button>
         <AboutDialog t={t} />
       </div>
     </header>
