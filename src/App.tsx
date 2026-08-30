@@ -163,8 +163,8 @@ export default function App() {
     document.querySelector<HTMLLinkElement>("#app-favicon")?.setAttribute(
       "href",
       theme === "dark"
-        ? "/favicon-dark-32.png?v=brand-dark-fba"
-        : "/favicon-light-32.png?v=brand-light-005316",
+        ? "/favicon-dark-32.png?v=brand-dark-fba-2"
+        : "/favicon-light-32.png?v=brand-light-005316-2",
     )
   }, [theme])
 
