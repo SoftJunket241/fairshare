@@ -10,8 +10,9 @@
 
 A web app that splits shared household items among roommates when they move out.
 Everyone votes privately what they want; the algorithm returns a split that is
-**provably EFX** (envy-free up to any item) — the strongest fairness guarantee
-mathematics offers when items cannot be cut in half.
+**checked to be EFX** (envy-free up to any one item) — a strong fairness
+guarantee for indivisible goods under binary preferences, re-verified against
+the ballots on every run.
 
 The product is bilingual (Vietnamese / English), works on mobile, and is being
 submitted to a math / computer-science competition with the judging criteria:

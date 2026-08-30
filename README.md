@@ -18,20 +18,27 @@ don't.
 You don't need to know the math to benefit from it. Here is what FairShare
 gives a household, in plain terms:
 
-1. **A split nobody can resent by more than one item.** Everyone marks what
-   they want; the result guarantees that if you still feel someone did
-   better, the *entire* difference is one indivisible item — the machine
-   itself. This is the strongest no-hard-feelings guarantee that exists
-   when items can't be cut in half.
+1. **A split where no envy is more than one item deep.** Everyone marks
+   what they want; wherever someone still feels a neighbor did better, you
+   can point to one item in that neighbor's share whose removal makes the
+   feeling go away. The check for this property (called EFX) is run on the
+   actual result, every time, and shown to you. For indivisible goods and
+   want/don't-want preferences, this is a strong fairness guarantee.
 
-2. **No reason to lie on your ballot.** This is not a promise about the
-   app's honesty — it is a property of the mechanism, proven in the
-   literature: over-claiming an item you barely want cannot get you a
-   better outcome. Honesty is the best strategy, provably.
+2. **A ballot with a research footing, not a promise about strategy.** The
+   yes/no ballot is a deliberate trade-off (explained below). The
+   mechanism Babaioff, Ezra & Feige (2020) design for these ballots is
+   provably truthful — honesty is the best strategy *in their mechanism*.
+   FairShare computes a same-family split and verifies its EFX-ness;
+   it does not implement their exact mechanism and does not certify
+   truthfulness of the running app.
 
-3. **A split that wastes nothing.** The same allocation that is fair is
-   also efficient: no reassignment could give someone more of what they
-   wanted without taking from someone else who wanted it.
+3. **A split that wastes nothing.** The family of allocations the engine
+   computes is the efficient one for binary ballots: no reassignment could
+   give someone more of what they wanted without taking from someone else
+   who wanted it. This efficiency property is a property of the
+   allocation family (proved in the literature), not something the app
+   re-checks per run — the per-run check is the EFX one.
 
 4. **An answer to "why did they get it and not me?"** Right under the
    result, FairShare re-checks its own work and answers, for every pair of
@@ -63,12 +70,15 @@ look like a single checkmark. FairShare cannot tell them apart, and this is
 a choice, not an oversight.
 
 If we asked you to rate items 0–100 instead, a strategic roommate would
-rate everything 100, and the mechanism would reward the loudest bidder —
-exactly the dynamic that made the group-chat argument unresolvable. A
-yes/no ballot *provably* removes the incentive to inflate (see Babaioff,
-Ezra & Feige 2020). The price is expressiveness: we lose the ability to
-distinguish deep attachment from mild preference. We collect *less*
-information because it is the only kind we can handle honestly.
+rate everything 100 — the intuitive dynamic that made the group-chat
+argument unresolvable. But that's an intuition, not a theorem. The
+theorem worth naming goes the other way: once the items you want can
+differ in value by even a little, combining truthfulness with
+fairness/efficiency is already hard in general — that's a result from
+mechanism design, not something an app can promise away. The yes/no
+ballot gives up intensity for a rule that is easy to check and has a
+better research footing (see Babaioff, Ezra & Feige 2020). We collect
+*less* information on purpose; the trade is deliberate.
 
 When two people both want the same item with different intensities, no
 mechanism — ours or any other — can read that difference from a yes/no
@@ -93,12 +103,17 @@ even that closed the gap:
 - **Cash only applies where it is honest.** If exactly one person wanted
   the contested item, the other side receives **half its agreed price**:
   one side keeps the item, the other keeps the money, and the two come
-  out even. If two or more people wanted it, no cash amount can close
-  the gap for both — so FairShare proposes nothing and says so.
-- **The final verdict is re-checked, not assumed.** After a settlement,
-  the fairness check runs again with the cash included. If envy is gone,
-  you see a green verdict. If it isn't, FairShare says *"envy remains"*
-  rather than dressing the result up.
+  out even. If two or more people wanted it, the app deliberately
+  proposes nothing — no automatic cash amount can stand in for a
+  negotiation between people who all want the same thing, so the call
+  is left to the household: split the difference, coin-flip, rotate
+  ownership over time.
+- **The settlement is a proposed split, not a certified EFX.** The
+  pre-cash allocation is the part the app checks against the EFX
+  definition; the cash row is a negotiation aid, not a guarantee. The
+  app does not certify EFX (or envy-freeness) for the post-settlement
+  row — its job is to show the proposed split honestly and let the
+  household decide.
 
 Money here is not "buying silence" and it is not a claim that cash equals
 sentiment. It is the honest admission that for one class of conflicts —
@@ -116,10 +131,11 @@ it into one question a person actually cares about:
 
 The envy table answers this for every pair of roommates. A green cell
 means "no — you're doing fine with what you have." An amber cell means
-"only by one item," and that item is named in the notes below the table,
-in a sentence written for a person, not for a proof system: who may feel
-hard done by, what the entire gap consists of, and why that gap couldn't
-be closed (the item can't belong to both).
+"only by one related item" — and that item is named in the notes below
+the table, in a sentence written for a person, not a proof system: who
+may feel hard done by, which item in the other share would close the
+envy if it were removed, and why that item couldn't go to both people
+anyway (the item can't be split).
 
 If you don't trust the table, you can check it by hand: the check is plain
 arithmetic on the ballots you just entered — count what each person marked
@@ -150,10 +166,13 @@ promise — it's all below.
 item either wanted or not — Babaioff, Ezra & Feige (2020), *Fair and
 Truthful Mechanisms for Dichotomous Valuations*, show that a
 **Lorenz-dominating** allocation is simultaneously EFX, EF1, max Nash
-welfare, max utilitarian welfare, and truthful. Those five properties
-package into the plain-English promises above: no more than one item of
-envy (EFX), honesty is dominant (truthful), and nothing is wasted
-(welfare-maximal).
+welfare, max utilitarian welfare, and truthful. In their paper,
+"truthful" is a property of the *mechanism* — a participant's dominant
+strategy is to report honestly. FairShare does not implement that exact
+mechanism, so it does not inherit the truthfulness property as a
+guarantee; it does inherit the EFX / EF1 / welfare family of properties
+for the *kind* of allocation it computes, and `verify()` checks EFX
+against the result.
 
 **How the engine finds it.** `src/lib/fairdiv.ts` computes a leximin /
 Lorenz-dominating allocation via cost-reducing augmenting paths — the
@@ -171,19 +190,23 @@ optimal semi-matching technique of Harvey et al.:
 **The verifier.** `verify()` is independent of `allocate()`: given the
 wants matrix and the allocation, it recomputes every utility, every envy
 entry, and every aggregate from scratch. In the UI, this is the fairness
-check — the piece that re-derives, for every pair of roommates, the answer
-to *"if you swapped shares, would you actually receive more of the things
-you wanted?"* Nothing about the result is taken on trust; every number
-shown is recomputed from the ballots.
+check — the piece that re-derives, for every pair of roommates, the
+answer to *"if you swapped shares, would you actually receive more of
+the things you wanted?"* Nothing about the result is taken on trust;
+every number shown is recomputed from the ballots.
 
 **Cash settlement.** `settle()` inspects the contested edges the verifier
 flags. For each edge where the envier is the **sole** wanter of every
-contested item, it proposes `sum(prices[i] / 2)` from envier to envied,
-then recomputes the envy matrix with cash valued 1:1 against items
-(scaled by the median price) and reports the post-money `isEF` / `isEFX`
-honestly — including "still envious" when that's the truth. Edges with
-multiple wanters produce no transfer, by design: no cash amount can
-close a gap between two people who both want the item.
+contested item, it proposes `sum(prices[i] / 2)` from envier to envied.
+Cash is not part of the original paper's result: the prices are a
+negotiation tool this app adds on top, agreed by the household before
+voting, and the post-settlement row is a *proposed split*, not a
+guarantee. The pre-cash allocation is the part that the paper's EFX
+guarantee attaches to; with cash in the mix, the app stops short of
+certifying EFX and leaves the final call to the household. Edges with
+multiple wanters produce no transfer, by design: when several people
+all want the same item, no automatic cash amount can stand in for the
+negotiation, and the app stays silent.
 
 ## How the tests work
 

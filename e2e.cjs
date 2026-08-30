@@ -50,6 +50,16 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   await page.waitForTimeout(300);
   await page.screenshot({ path: SHOT("r03-preset.png") });
 
+  console.log("== PRICE SHEET (setup screen, before voting) ==");
+  await page.getByRole("button", { name: /\+ Open the price sheet/ }).click();
+  await page.waitForTimeout(200);
+  // Set a price on the first item — agreed by everyone BEFORE anyone votes
+  const priceInputs = page.locator("input[type='number']");
+  await priceInputs.first().fill("120");
+  await page.screenshot({ path: SHOT("r03b-pricesheet.png") });
+  await page.getByRole("button", { name: "Close the price sheet" }).click();
+  await page.waitForTimeout(200);
+
   console.log("== VOTING ==");
   await page.getByRole("button", { name: /Start private voting/ }).click();
   await page.waitForTimeout(300);
@@ -90,16 +100,14 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   check(!("wants" in parsed), "localStorage has NO ballots");
 
   console.log("== MONEY ==");
-  await page.getByRole("button", { name: "+ Add prices" }).click();
-  await page.waitForTimeout(200);
-  // Set a price on the first item
-  const priceInputs = page.locator("input[type='number']");
-  await priceInputs.first().fill("120");
+  // Prices were already agreed at setup; on the results screen the money card
+  // is read-only and exposes only the Settle action.
   await page.getByRole("button", { name: "Settle" }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: SHOT("r07-settle.png"), fullPage: true });
   const body3 = await page.locator("body").innerText();
   check(body3.includes("After settlement") || body3.includes("đền bù"), "settlement card present");
+  check(body3.includes("no settlement can be computed") === false, "prices carried over from setup");
 
   console.log("== CONTESTED LAPTOP ==");
   await page.getByRole("button", { name: "Start over" }).click();

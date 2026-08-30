@@ -858,6 +858,9 @@ function Results({
         <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
           {t.resultSub(gotSomething, people.length, items.length)}
         </p>
+        <p className="mx-auto mt-3 max-w-xl text-[12px] leading-relaxed text-muted-foreground/80">
+          {t.efxHeadline}
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -943,12 +946,15 @@ function Results({
           <div className="overflow-x-auto">
             <EnvyMatrix
               people={people}
-              envy={settleResult?.envy ?? v.envy}
+              envy={v.envy}
               header={t.colHeader}
             />
           </div>
           <p className="text-xs leading-relaxed text-muted-foreground">
             {t.legendGreen} {t.legendAmber}
+          </p>
+          <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
+            {t.efxWhat}
           </p>
         </CardContent>
       </Card>
@@ -1176,8 +1182,8 @@ function MoneyCard(props: {
           <>
             <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
               {props.lang === "vi"
-                ? "Giá này cả nhà đã chốt ở bước 1, trước khi bỏ phiếu — nên không ai được lợi từ việc khai sai muốn. Món đang tranh chấp được viền vàng."
-                : "These prices were agreed by everyone at step 1, before voting — so nobody can gain from a strategic ballot. Contested items are ringed in amber."}
+                ? "Giá này cả nhà đã chốt ở bước 1, trước khi bỏ phiếu — mọi người cùng nhìn thấy cùng một con số tham khảo khi thương lượng. Món đang tranh chấp được viền vàng; đền bù là đề xuất, không phải bảo đảm toán học."
+                : "These prices were agreed by everyone at step 1, before voting — everyone negotiates from the same reference numbers. Contested items are ringed in amber; the settlement is a proposal, not a mathematical guarantee."}
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
               {items.map((it, i) => (
@@ -1206,6 +1212,12 @@ function MoneyCard(props: {
 
         {settleResult && (
           <div className="space-y-3 rounded-lg border border-violet-400/20 bg-violet-500/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-violet-200/90">
+              {t.settleHeadline}
+            </p>
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              {t.settleNote}
+            </p>
             {settleResult.transfers.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {allContested.length === 0
@@ -1238,11 +1250,11 @@ function MoneyCard(props: {
             </p>
             <p className="text-xs">
               <span className="font-semibold text-violet-200">{t.moneyAfter}</span>{" "}
-              {settleResult.isEF ? (
-                <span className="text-emerald-300">envy-free ✓</span>
-              ) : (
-                <span className="text-amber-300">{t.moneyStillContested}</span>
-              )}
+              <span className="text-muted-foreground">
+                {props.lang === "vi"
+                  ? "Đây là đề xuất thương lượng. Máy không chứng minh bảo đảm EFX cho phần có tiền — đó là quyết định của cả nhà."
+                  : "This is a proposed split. The app does not certify EFX for the post-cash row — that call is the household's."}
+              </span>
             </p>
           </div>
         )}
