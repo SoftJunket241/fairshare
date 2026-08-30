@@ -277,14 +277,8 @@ function TopBar({
   return (
     <header className="sticky top-0 z-40 -mx-5 mb-2 flex items-center gap-3 border-b border-white/[0.06] bg-background/70 px-5 py-4 backdrop-blur-xl">
       <div className="flex items-center gap-2.5">
-        <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-500/30">
-          <svg viewBox="0 0 40 40" className="size-6" aria-hidden="true">
-            <path
-              d="M10 7 L10 33 L14.2 33 L14.2 22.4 L24.4 22.4 L24.4 18.4 L14.2 18.4 L14.2 11.2 L27 11.2 L27 7 Z"
-              fill="white"
-            />
-            <rect x="20" y="26" width="11" height="3.2" rx="1.2" fill="oklch(0.78 0.16 85)" />
-          </svg>
+        <span className="grid size-8 place-items-center overflow-hidden rounded-lg shadow-lg shadow-violet-500/30">
+          <img src="/logo-40.png" alt="FairShare" className="size-8 object-cover" />
         </span>
         <span className="text-lg font-semibold tracking-tight">{t.appName}</span>
       </div>
