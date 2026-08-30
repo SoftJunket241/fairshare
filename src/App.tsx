@@ -153,7 +153,18 @@ export default function App() {
 
   useEffect(() => { saveSetup(people, items) }, [people, items])
   useEffect(() => { setLang(lang) }, [lang])
-  useEffect(() => { applyTheme(theme); saveTheme(theme) }, [theme])
+  useEffect(() => {
+    applyTheme(theme)
+    saveTheme(theme)
+    document.querySelector('meta[name="theme-color"]')?.setAttribute(
+      "content",
+      theme === "dark" ? "#0a0a0a" : "#fafafa",
+    )
+    document.querySelector<HTMLLinkElement>("#app-favicon")?.setAttribute(
+      "href",
+      theme === "dark" ? "/favicon-dark-32.png" : "/favicon-light-32.png",
+    )
+  }, [theme])
 
   function toggleTheme() {
     setThemeState((prev) => (prev === "dark" ? "light" : "dark"))
@@ -278,7 +289,7 @@ function StepDot({ active, done, label }: { active: boolean; done: boolean; labe
       className={
         "rounded-full px-2.5 py-1 text-xs font-medium transition-colors " +
         (active
-          ? "bg-white/10 text-white ring-1 ring-inset ring-violet-400/40"
+          ? "bg-accent text-foreground ring-1 ring-inset ring-violet-400/40"
           : done
             ? "text-emerald-400"
             : "text-muted-foreground")
@@ -307,10 +318,14 @@ function TopBar({
   const order: Screen[] = ["setup", "vote", "results"]
   const idx = order.indexOf(screen)
   return (
-    <header className="sticky top-0 z-40 -mx-5 mb-2 flex items-center gap-3 border-b border-white/[0.06] bg-background/70 px-5 py-4 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 -mx-5 mb-2 flex items-center gap-3 border-b border-border bg-background/70 px-5 py-4 backdrop-blur-xl">
       <div className="flex items-center gap-2.5">
         <span className="grid size-8 place-items-center overflow-hidden rounded-lg shadow-lg shadow-violet-500/30">
-          <img src="/logo-40.png" alt="FairShare" className="size-8 object-cover" />
+          <img
+            src={theme === "dark" ? "/logo-dark.png" : "/logo-light.png"}
+            alt="FairShare"
+            className="size-8 object-contain"
+          />
         </span>
         <span className="text-lg font-semibold tracking-tight">{t.appName}</span>
       </div>
@@ -320,12 +335,12 @@ function TopBar({
         <StepDot active={idx === 2} done={false} label={t.nav3} />
       </nav>
       <div className="ml-auto flex items-center gap-1">
-        <div className="flex overflow-hidden rounded-md border border-white/10 text-[11px] font-medium">
+        <div className="flex overflow-hidden rounded-md border border-border text-[11px] font-medium">
           <button
             onClick={() => onLang("vi")}
             className={
               "px-2 py-1 transition-colors " +
-              (lang === "vi" ? "bg-violet-500/20 text-violet-200" : "text-muted-foreground hover:bg-white/5")
+              (lang === "vi" ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-muted")
             }
             aria-label="Tiếng Việt"
             title="Tiếng Việt"
@@ -336,7 +351,7 @@ function TopBar({
             onClick={() => onLang("en")}
             className={
               "px-2 py-1 transition-colors " +
-              (lang === "en" ? "bg-violet-500/20 text-violet-200" : "text-muted-foreground hover:bg-white/5")
+              (lang === "en" ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-muted")
             }
             aria-label="English"
             title="English"
@@ -346,7 +361,7 @@ function TopBar({
         </div>
         <button
           onClick={onTheme}
-          className="grid size-7 place-items-center rounded-md border border-white/10 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+          className="grid size-7 place-items-center rounded-md border border-border text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           title={theme === "dark" ? "Chế độ sáng" : "Chế độ tối"}
         >
