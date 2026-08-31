@@ -48,6 +48,7 @@ type StringDict = {
   colHeader: string
   efNote: React.ReactNode
   efxNote: React.ReactNode
+  needsReview: string
   settleHeadline: string
   settleNote: string
   reVote: string
@@ -171,6 +172,8 @@ export const STRINGS: Record<Lang, StringDict> = {
         Một cách chia hoàn toàn không ghen tị không tồn tại với tập muốn này (có món ai cũng muốn mà không thể cắt đôi). Ở những cặp còn ghen tị, bạn đều chỉ ra được một món trong phần kia mà nếu bỏ món đó đi thì hết ghen tị — với sở thích nhị phân và đồ không thể chia, đây là một bảo đảm công bằng mạnh.
       </>
     ),
+    needsReview:
+      "Cách chia này không đạt điều kiện EFX — có ghen tị mà không thuộc dạng 'chỉ cần bỏ một món'. Hãy thử bỏ phiếu lại, thay đổi rót, hoặc thảo luận thêm.",
     settleHeadline: "💡 Gợi ý mở đầu thương lượng",
     settleNote:
       "Đây là điểm bắt đầu cuộc trò chuyện, không phải đề xuất thanh toán: app không định hướng ai trả ai, không tính toán đồng tiền nào, và không gắn kết quả có tiền với bất kỳ bảo đảm toán học nào. Phần chia trước khi có tiền là phần app kiểm tra EFX; từ đây trở đi là việc của cả nhà.",
@@ -344,6 +347,8 @@ export const STRINGS: Record<Lang, StringDict> = {
         it — a meaningful property, for indivisible goods and binary wants.
       </>
     ),
+    needsReview:
+      "This allocation does not satisfy EFX — some envy exceeds what removing one item can fix. Try re-voting, changing the preset, or discussing further.",
     settleHeadline: "💡 Conversation prompts",
     settleNote:
       "These are starting points for a talk, not payment proposals: the app picks no payer, no payee, no amount, and attaches no mathematical guarantee to any cash outcome. The pre-cash split is the part the app checks against EFX; from here on it's the household's call.",

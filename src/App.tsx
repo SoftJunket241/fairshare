@@ -834,7 +834,7 @@ function Results({
         txt += `  • ${items[p.item]} — ${people[p.envier]} notes it sits in ${people[p.envied]}'s share. Reference price $${p.price.toFixed(0)}. Talk it over.\n`
       }
     }
-    txt += `\nFairness: ${v.isEF ? t.fairnessLineEF : t.fairnessLineEFX}\nSplit with FairShare.`
+    txt += `\nFairness: ${v.isEF ? t.fairnessLineEF : v.isEFX ? t.fairnessLineEFX : t.needsReview}\nSplit with FairShare.`
     navigator.clipboard?.writeText(txt)
   }
 
@@ -846,11 +846,13 @@ function Results({
             "mx-auto mb-5 max-w-full gap-1.5 px-4 py-1.5 text-sm ring-1 ring-inset whitespace-normal text-center " +
             (v.isEF
               ? "bg-emerald-400/10 text-emerald-300 ring-emerald-400/30 hover:bg-emerald-400/10"
-              : "bg-amber-400/10 text-amber-300 ring-amber-400/30 hover:bg-amber-400/10")
+              : v.isEFX
+                ? "bg-amber-400/10 text-amber-300 ring-amber-400/30 hover:bg-amber-400/10"
+                : "bg-rose-400/10 text-rose-300 ring-rose-400/30 hover:bg-rose-400/10")
           }
         >
-          <span>{v.isEF ? "✓" : "≈"}</span>
-          {v.isEF ? t.efBadge : t.efxBadge}
+          <span>{v.isEF ? "✓" : v.isEFX ? "≈" : "✗"}</span>
+          {v.isEF ? t.efBadge : v.isEFX ? t.efxBadge : t.needsReview}
         </Badge>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           {t.resultTitle} <span className="text-gradient">{t.resultTitleSpan}</span>
@@ -859,7 +861,7 @@ function Results({
           {t.resultSub(gotSomething, people.length, items.length)}
         </p>
         <p className="mx-auto mt-3 max-w-xl text-[12px] leading-relaxed text-muted-foreground/80">
-          {t.efxHeadline}
+          {v.isEFX ? t.efxHeadline : ""}
         </p>
       </div>
 
@@ -974,9 +976,16 @@ function Results({
       />
 
       <div className="space-y-3">
-        <div className="rounded-xl border border-white/[0.06] border-l-4 border-l-violet-400 bg-white/[0.04] p-4 text-sm leading-relaxed backdrop-blur">
-          {v.isEF ? t.efNote : t.efxNote}
-        </div>
+        {!v.isEFX && (
+          <div className="rounded-xl border border-white/[0.06] border-l-4 border-l-rose-400 bg-white/[0.04] p-4 text-sm leading-relaxed backdrop-blur">
+            {t.needsReview}
+          </div>
+        )}
+        {(v.isEF || v.isEFX) && (
+          <div className="rounded-xl border border-white/[0.06] border-l-4 border-l-violet-400 bg-white/[0.04] p-4 text-sm leading-relaxed backdrop-blur">
+            {v.isEF ? t.efNote : t.efxNote}
+          </div>
+        )}
         {contested && (
           <div className="rounded-xl border border-white/[0.06] border-l-4 border-l-amber-400 bg-white/[0.04] p-4 text-sm leading-relaxed backdrop-blur">
             {t.contestedLine(contested.envier, contested.envied, contested.item)}
