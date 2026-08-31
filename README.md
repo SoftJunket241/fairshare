@@ -90,8 +90,8 @@ item, with a fair split already settled around it.
 
 Some splits end with a contested item and no envy-free solution. FairShare
 won't pretend otherwise. It offers an optional negotiation tool — money —
-under strict conditions, and tells you honestly whether even that closed
-the gap:
+as conversation prompts, under strict conditions, and tells you honestly
+whether even that closed the gap:
 
 - **Prices come from the household, together, before voting.** The price
   sheet is filled in the open, by everyone, *before* the split runs —
@@ -100,20 +100,20 @@ the gap:
   prices were set after you knew who envied what, you could mark "want"
   on an item you don't care about just to tilt the later bargaining. Set
   first and in the open, that play has less room to operate.
-- **Cash only applies where it is honest.** If exactly one person wanted
-  the contested item, the other side receives **half its agreed price**:
-  one side keeps the item, the other keeps the money, and the two come
-  out even. If two or more people wanted it, the app deliberately
-  proposes nothing — no automatic cash amount can stand in for a
-  negotiation between people who all want the same thing, so the call
-  is left to the household: split the difference, coin-flip, rotate
-  ownership over time.
-- **The settlement is a proposed split, not a certified EFX.** The
-  pre-cash allocation is the part the app checks against the EFX
-  definition; the cash row is a negotiation aid, not a guarantee. The
-  app does not certify EFX (or envy-freeness) for the post-settlement
-  row — its job is to show the proposed split honestly and let the
-  household decide.
+- **The app surfaces prompts, not transfers.** If exactly one person
+  wanted the contested item, the price-sheet card in the result screen
+  names the item, the envier, and the envied, and shows the reference
+  price with half of it as a starting anchor. If two or more people
+  wanted it, the app deliberately proposes nothing — no automatic amount
+  can stand in for a negotiation between people who all want the same
+  thing, so the call is left to the household: split the difference,
+  coin-flip, rotate ownership over time.
+- **The pre-cash split is the part with a mathematical guarantee.** The
+  app's EFX check runs against the allocation itself, before any cash
+  enters the picture. The prompts below that are a *starting point for
+  a conversation*, not a guarantee. The app does not certify EFX (or
+  envy-freeness) for any post-cash outcome — its job is to show the
+  prompts honestly and let the household decide.
 
 Money here is not "buying silence" and it is not a claim that cash equals
 sentiment. It is the honest admission that for one class of conflicts —
@@ -210,7 +210,7 @@ answer to *"if you swapped shares, would you actually receive more of
 the things you wanted?"* Nothing about the result is taken on trust;
 every number shown is recomputed from the ballots.
 
-**Cash settlement.** `discuss()` inspects the contested edges the verifier
+**Conversation prompts.** `discuss()` inspects the contested edges the verifier
 flags. For each edge where the envier is the **sole** wanter of every
 contested item and the household has agreed a reference price, it surfaces
 a conversation prompt naming the envier, the envied, the item, and the
@@ -229,7 +229,7 @@ in for the negotiation, and the app stays silent.
 
 ```
 $ node test-fairdiv.mjs
-fairdiv: 276 pass, 0 fail
+fairdiv: ~315 pass, 0 fail
 ```
 
 `test-fairdiv.mjs` runs through Node 24's native TypeScript type-stripping
@@ -280,9 +280,9 @@ node e2e.cjs         # after `npm run build`
 ```
 src/
   App.tsx              # single-file UI, all surfaces (ballot, results, money)
-  lib/fairdiv.ts       # the engine: allocate / verify / settle
+  lib/fairdiv.ts       # the engine: allocate / verify / discuss
   components/ui/       # shadcn primitives on @base-ui/react
-test-fairdiv.mjs       # property test for the engine (276 assertions)
+test-fairdiv.mjs       # property test for the engine (~315 assertions)
 e2e.cjs                # Playwright end-to-end + privacy-by-design check
 shots/                 # rendered screenshots referenced from the UI
 public/
