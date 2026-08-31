@@ -21,9 +21,10 @@ gives a household, in plain terms:
 1. **A split where no envy is more than one item deep.** Everyone marks
    what they want; wherever someone still feels a neighbor did better, you
    can point to one item in that neighbor's share whose removal makes the
-   feeling go away. The check for this property (called EFX) is run on the
-   actual result, every time, and shown to you. For indivisible goods and
-   want/don't-want preferences, this is a strong fairness guarantee.
+   feeling go away. The app verifies this property (called EFX) on the
+   actual result, every time, and shows you the check. For binary (want /
+   don't-want) preferences and indivisible items, this is a meaningful
+   fairness property.
 
 2. **A ballot with a research footing, not a promise about strategy.** The
    yes/no ballot is a deliberate trade-off (explained below). The
@@ -213,9 +214,8 @@ unresolved list the UI flags explicitly. The function proposes no payer,
 no payee, no amount. Cash is not part of the original paper's result:
 the prices are a negotiation tool this app adds on top, agreed by the
 household before voting, and the prompts are a *starting point for a
-conversation*, not a guarantee. The pre-cash allocation is the part that
-the paper's EFX guarantee attaches to; the cash row is the household's own
-call.
+conversation*, not a guarantee. The app re-checks EFX on the
+pre-cash allocation; the cash row is the household's own call.
 
 ## How the tests work
 
@@ -238,7 +238,7 @@ fairdiv: property tests pass, 0 fail
   reference price; items with no price land in an unresolved list; the
   function proposes no payer, no payee, no amount.
 - 100 random 3×6 trials confirming every prompt's price matches the input
-  and the half-price anchor is half the reference price.
+  and the prompt's price matches the input price.
 
 ```
 $ node e2e.cjs

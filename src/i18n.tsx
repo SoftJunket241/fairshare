@@ -306,7 +306,7 @@ export const STRINGS: Record<Lang, StringDict> = {
     efxHeadline: "This is the split the machine proposed — it re-checked it too.",
     resultTitle: "Here's", resultTitleSpan: "the split",
     resultSub: (got: number, n: number, m: number) =>
-      `${n} people, ${m} items. ${got} of ${n} got at least one thing they wanted in the initial item allocation. The split was computed, then re-checked against the EFX definition (below); with indivisible items, that's a strong fairness guarantee for this setting.`,
+      `${n} people, ${m} items. ${got} of ${n} got at least one thing they wanted in the initial item allocation. The split was computed, then re-checked against the EFX definition (below); for binary wants and indivisible items, that's a meaningful fairness property.`,
     noOneWanted: "🤷 Nobody wanted these",
     noOneWantedDesc:
       "Sell, donate, or coin-flip. The algorithm won't force anyone to take stuff they don't want.",
@@ -320,9 +320,8 @@ export const STRINGS: Record<Lang, StringDict> = {
         <em>envy-free up to any one item</em>: wherever envy remains between a
         pair, you can always point to one item in the other's share whose removal
         would make you no longer prefer their share over your own. That's a
-        strong guarantee for indivisible goods under binary (want / don't-want)
-        preferences — and FairShare claims only the EFX property of its own
-        output; every further property of the theory needs more assumptions.
+        meaningful property for indivisible goods under binary (want / don't-want)
+        preferences — and FairShare's engine re-verifies EFX on every output;
       </>
     ),
     legendGreen: "Green = no envy.",
@@ -342,7 +341,7 @@ export const STRINGS: Record<Lang, StringDict> = {
         A perfectly envy-free split doesn't exist for your set of wants (some
         item everyone wanted can't be cut in half). For every pair where envy
         remains, there is one item in the other share whose removal eliminates
-        it — a strong fairness guarantee, for indivisible goods and binary wants.
+        it — a meaningful property, for indivisible goods and binary wants.
       </>
     ),
     settleHeadline: "💡 Conversation prompts",
@@ -361,8 +360,8 @@ export const STRINGS: Record<Lang, StringDict> = {
         wherever envy remains between a pair, you can point to one item in the
         other's share whose removal would make you no longer prefer their share
         over your own. Items can't be cut in half and preferences are recorded
-        as want/don't-want only — in that setting, this is a strong fairness
-        guarantee.
+        as want/don't-want only — in that setting, this is a meaningful
+        fairness property.
       </>
     ),
     aboutWhy: "Why yes/no, not 0–100?",
