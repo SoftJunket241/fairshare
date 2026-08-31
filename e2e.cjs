@@ -133,6 +133,15 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   await page.getByPlaceholder("e.g. Sofa").fill("Laptop");
   await page.getByRole("button", { name: "Add" }).last().click();
   await page.waitForTimeout(200);
+
+  // Agree a price before voting — the only way discussion prompts can
+  // surface a reference price.
+  await page.getByRole("button", { name: /\+ Open the price sheet/ }).click();
+  await page.waitForTimeout(200);
+  await page.locator('input[type="number"]').first().fill("500");
+  await page.getByRole("button", { name: "Close the price sheet" }).click();
+  await page.waitForTimeout(200);
+
   await page.getByRole("button", { name: /Start private voting/ }).click();
   await page.waitForTimeout(200);
   for (let v = 0; v < 2; v++) {
@@ -146,6 +155,16 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   const body2 = await page.locator("body").innerText();
   check(body2.includes("EFX"), "contested shows EFX verdict");
   check(body2.includes("Laptop"), "explanation names Laptop");
+
+  // Open the discussion prompts and verify: contested item appears in the
+  // unresolved list (two people want it, so no prompt is produced), and
+  // there is still no executable-payment language.
+  await page.getByRole("button", { name: /Show prompts|Re-list|Conversation prompts|Settle|Gợi ý/ }).click();
+  await page.waitForTimeout(300);
+  const bodyPrompts = await page.locator("body").innerText();
+  const lowerP = bodyPrompts.toLowerCase();
+  check(bodyPrompts.includes("Laptop"), "unresolved list names the contested item");
+  check(!lowerP.includes("pays") && !lowerP.includes("transfer") && !lowerP.includes("settlement"), "no executable payment language in prompts card");
   await page.screenshot({ path: SHOT("r08-contested.png"), fullPage: true });
 
   console.log("== ERRORS ==");

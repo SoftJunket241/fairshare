@@ -200,7 +200,7 @@ export const STRINGS: Record<Lang, StringDict> = {
         công bằng vừa{" "}
         <strong className="text-foreground">thành thật là chiến lược tốt nhất</strong>{" "}
         (không ai được lợi hơn khi khai sai). FairShare không chạy đúng cơ chế đó
-        mà chỉ tính một cách chia cùng loại (leximin) và{" "}
+        mà chỉ tính một cách chia cùng loại (một routine leximin-style, lấy cảm hứng từ kỹ thuật augmenting-path) và{" "}
         <strong className="text-foreground">tự kiểm lại tính EFX của kết quả</strong> —
         tính "thành thật là tối ưu" là tính chất của cơ chế trong bài báo, không phải
         thứ app này chứng minh được cho chính nó.
@@ -377,7 +377,8 @@ export const STRINGS: Record<Lang, StringDict> = {
         under binary valuations, is both fair and one where{" "}
         <strong className="text-foreground">honesty is the best strategy</strong>{" "}
         (no one gains by misreporting). FairShare does not run that exact
-        mechanism — it computes a same-family split (leximin) and{" "}
+        mechanism — it computes an allocation in the same family
+        (a leximin-style routine inspired by augmenting-path techniques) and{" "}
         <strong className="text-foreground">re-checks the EFX property of the
         result</strong>. The "honesty is optimal" property belongs to the
         paper's mechanism, not something this app proves about itself.

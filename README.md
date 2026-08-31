@@ -164,12 +164,12 @@ Truthful Mechanisms for Dichotomous Valuations*](https://doi.org/10.1145/3391403
 they call the Prioritized Egalitarian (PE) mechanism. The PE mechanism
 is *truthful*: a participant's dominant strategy is to report honestly.
 When agents do report truthfully, the PE mechanism returns a
-Lorenz-dominating allocation; that allocation has EFX, EF1, max Nash
-welfare, and max utilitarian welfare properties. (Those are
-properties of the *output*, not of the mechanism itself.) FairShare
-does not implement the PE mechanism, so it does not claim any of
-those properties as guarantees about the running app. What FairShare
-*does* guarantee is narrower:
+Lorenz-dominating allocation; that allocation happens to carry EFX,
+EF1, max Nash welfare, and max utilitarian welfare properties. (Those
+are properties of the *PE mechanism's output*, not of the allocation
+FairShare computes.) FairShare does not implement the PE mechanism, so
+it does not claim any of those properties as guarantees about the
+running app. What FairShare *does* guarantee is narrower:
 
 - FairShare independently checks EFX on the allocation it returns.
   The check is run on the actual ballots and the actual result, in
@@ -225,7 +225,7 @@ in for the negotiation, and the app stays silent.
 
 ```
 $ node test-fairdiv.mjs
-fairdiv: 339 pass, 0 fail
+fairdiv: ~320 pass, 0 fail
 ```
 
 `test-fairdiv.mjs` runs through Node 24's native TypeScript type-stripping
