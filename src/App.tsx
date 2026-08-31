@@ -37,53 +37,46 @@ const AVATAR = [
   "bg-gradient-to-br from-indigo-400 to-purple-600 shadow-indigo-500/30",
 ]
 
-const PRESETS = {
-  roommates: {
-    people: ["An", "Binh", "Chi"],
-    items: [
-      "Sofa",
-      "TV",
-      "Espresso machine",
-      "Bookshelf",
-      "Rice cooker",
-      "Standing lamp",
-      "Air fryer",
-    ],
+type PresetKey = "roommates" | "startup" | "trip" | "club"
+
+const PRESETS: Record<Lang, Record<PresetKey, { people: string[]; items: string[] }>> = {
+  en: {
+    roommates: {
+      people: ["Alex", "Blake", "Casey"],
+      items: ["Sofa", "TV", "Espresso machine", "Bookshelf", "Rice cooker", "Standing lamp", "Air fryer"],
+    },
+    startup: {
+      people: ["Founder A", "Founder B", "Founder C"],
+      items: ["Domain name", "GitHub org", "Customer list", "Server credits", "Logo files", "Slack archive"],
+    },
+    trip: {
+      people: ["Maya", "Lana", "Hugo"],
+      items: ["Tent", "Stove", "First-aid kit", "Cooler", "Power bank", "Binoculars"],
+    },
+    club: {
+      people: ["Alex", "Priya", "Hana"],
+      items: ["Speaker", "Projector", "Banner stand", "Mic set", "Trophies", "Camera"],
+    },
   },
-  startup: {
-    people: ["Founder A", "Founder B", "Founder C"],
-    items: [
-      "Domain name",
-      "GitHub org",
-      "Customer list",
-      "Server credits",
-      "Logo files",
-      "Slack archive",
-    ],
+  vi: {
+    roommates: {
+      people: ["An", "Bình", "Chi"],
+      items: ["Ghế sofa", "TV", "Máy pha espresso", "Kệ sách", "Nồi cơm điện", "Đèn đứng", "Nồi chiên không dầu"],
+    },
+    startup: {
+      people: ["Nhà sáng lập A", "Nhà sáng lập B", "Nhà sáng lập C"],
+      items: ["Tên miền", "Tổ chức GitHub", "Danh sách khách hàng", "Tín dụng máy chủ", "Tệp logo", "Lưu trữ Slack"],
+    },
+    trip: {
+      people: ["Mai", "Lan", "Huy"],
+      items: ["Lều", "Bếp dã ngoại", "Bộ sơ cứu", "Thùng giữ lạnh", "Pin dự phòng", "Ống nhòm"],
+    },
+    club: {
+      people: ["Trung", "Phương", "Hà"],
+      items: ["Loa", "Máy chiếu", "Giá treo banner", "Bộ mic", "Cúp", "Máy ảnh"],
+    },
   },
-  trip: {
-    people: ["Mai", "Lan", "Huy"],
-    items: [
-      "Tent",
-      "Stove",
-      "First-aid kit",
-      "Cooler",
-      "Power bank",
-      "Binoculars",
-    ],
-  },
-  club: {
-    people: ["Trung", "Phương", "Hà"],
-    items: [
-      "Speaker",
-      "Projector",
-      "Banner stand",
-      "Mic set",
-      "Trophies",
-      "Camera",
-    ],
-  },
-} as const
+}
 
 type Screen = "setup" | "vote" | "results"
 type Theme = "light" | "dark"
@@ -253,8 +246,8 @@ export default function App() {
             removePerson={(i) => setPeople(people.filter((_, idx) => idx !== i))}
             removeItem={(i) => setItems(items.filter((_, idx) => idx !== i))}
             loadPreset={(p) => {
-              setPeople([...PRESETS[p].people])
-              setItems([...PRESETS[p].items])
+              setPeople([...PRESETS[lang][p].people])
+              setItems([...PRESETS[lang][p].items])
             }}
             canStart={canStart}
             prices={prices}
@@ -442,7 +435,7 @@ function Setup(props: {
   addItem: () => void
   removePerson: (i: number) => void
   removeItem: (i: number) => void
-  loadPreset: (p: keyof typeof PRESETS) => void
+  loadPreset: (p: PresetKey) => void
   canStart: boolean
   prices: number[]
   setPrices: (n: number[]) => void
@@ -846,7 +839,7 @@ function Results({
       <div className="py-8 text-center">
         <Badge
           className={
-            "mx-auto mb-5 max-w-full gap-1.5 px-4 py-1.5 text-sm ring-1 ring-inset whitespace-normal text-center " +
+            "mx-auto mb-5 h-auto min-h-5 max-w-full gap-1.5 px-4 py-1.5 text-sm ring-1 ring-inset whitespace-normal text-center " +
             (v.isEF
               ? "bg-emerald-400/10 text-emerald-300 ring-emerald-400/30 hover:bg-emerald-400/10"
               : v.isEFX

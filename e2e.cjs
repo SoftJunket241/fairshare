@@ -55,6 +55,9 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   await page.waitForTimeout(150);
   const viText = await page.locator("body").innerText();
   check(viText.includes("Chuyển nhà"), "VI translation active");
+  await page.getByRole("button", { name: "Chuyển nhà chung" }).click();
+  const viPresetText = await page.locator("body").innerText();
+  check(viPresetText.includes("Máy pha espresso") && viPresetText.includes("Bình"), "VI preset loads Vietnamese people and items");
   await page.screenshot({ path: SHOT("r01b-vi.png") });
   await page.getByRole("button", { name: "EN" }).click();
   await page.waitForTimeout(150);
@@ -196,6 +199,10 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   check(await mobileStep.isVisible(), "mobile step indicator visible at 375px");
   const mobileStepText = await mobileStep.innerText();
   check(mobileStepText.includes("1/3") || mobileStepText.includes("2/3") || mobileStepText.includes("3/3"), "mobile step text shows N/3");
+  // The test has scrolled through the desktop result flow above. Reset before
+  // the full-page capture so the mobile screenshot begins at the real top.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(100);
   await fullPageShot(page, "r09-mobile.png");
   await page.setViewportSize({ width: 900, height: 1100 });
   await page.waitForTimeout(200);
