@@ -74,8 +74,8 @@ for (let t=0; t<100; t++){
 // ---------------------------------------------------------------------------
 
 // (a) EFX-1 with a priced item -> one prompt naming the item, the envier,
-//     the envied, the reference price, and half of it. No "from/to" is
-//     emitted — discuss() does not pick a transfer direction.
+//     the envied, and the reference price. No "from/to" or "half" is
+//     emitted — discuss() does not pick a transfer direction or split.
 {
   const people = ['A','B']
   const items  = ['x','y']
@@ -88,7 +88,6 @@ for (let t=0; t<100; t++){
   assert(d.prompts[0].item === 0, 'EFX-1 priced: item index correct')
   assert(d.prompts[0].envier === 0 && d.prompts[0].envied === 1, 'EFX-1 priced: envier/envied labelled')
   assert(d.prompts[0].price === 10, 'EFX-1 priced: reference price carried')
-  assert(Math.abs(d.prompts[0].half - 5) < 1e-9, 'EFX-1 priced: half price carried')
   assert(d.unresolved.length === 0, 'EFX-1 priced: nothing in unresolved')
 }
 
@@ -126,7 +125,6 @@ for (let t=0; t<100; t++){
   const d = m.discuss(people, items, ws, r, prices, contested);
   for (const p of d.prompts){
     assert(p.price === prices[p.item], `prompt price matches input (item ${p.item})`);
-    assert(p.half === prices[p.item] / 2, `prompt half correct (item ${p.item})`);
     assert(p.envier !== p.envied, 'prompt: envier != envied');
   }
   // The number of priced contested items should equal the number of prompts.

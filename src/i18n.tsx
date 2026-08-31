@@ -137,7 +137,7 @@ export const STRINGS: Record<Lang, StringDict> = {
     efxHeadline: "Đây là cách chia mà máy đề xuất — máy cũng tự kiểm lại.",
     resultTitle: "Đây là", resultTitleSpan: "cách chia",
     resultSub: (got: number, n: number, m: number) =>
-      `${n} người, ${m} món. ${got} / ${n} người nhận được ít nhất một món họ muốn. Máy đã chia xong rồi tự kiểm lại kết quả theo định nghĩa EFX (xem bên dưới); với đồ không thể cắt đôi, đó là bảo đảm công bằng mạnh mà lý thuyết cho phép ở đây.`,
+      `${n} người, ${m} món. ${got} / ${n} người nhận được ít nhất một món họ muốn trong phần chia đồ. Máy đã chia xong rồi tự kiểm lại kết quả theo định nghĩa EFX (xem bên dưới); với đồ không thể cắt đôi, đó là bảo đảm công bằng mạnh mà lý thuyết cho phép ở đây.`,
     noOneWanted: "🤷 Không ai muốn mấy món này",
     noOneWantedDesc:
       "Bán, tặng, hoặc tung đồng xu. Thuật toán không ép ai nhận đồ họ không muốn.",
@@ -309,7 +309,7 @@ export const STRINGS: Record<Lang, StringDict> = {
     efxHeadline: "This is the split the machine proposed — it re-checked it too.",
     resultTitle: "Here's", resultTitleSpan: "the split",
     resultSub: (got: number, n: number, m: number) =>
-      `${n} people, ${m} items. ${got} of ${n} got at least one thing they wanted. The split was computed, then re-checked against the EFX definition (below); with indivisible items, that's a strong fairness guarantee for this setting.`,
+      `${n} people, ${m} items. ${got} of ${n} got at least one thing they wanted in the initial item allocation. The split was computed, then re-checked against the EFX definition (below); with indivisible items, that's a strong fairness guarantee for this setting.`,
     noOneWanted: "🤷 Nobody wanted these",
     noOneWantedDesc:
       "Sell, donate, or coin-flip. The algorithm won't force anyone to take stuff they don't want.",

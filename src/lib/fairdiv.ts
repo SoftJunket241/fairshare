@@ -177,14 +177,12 @@ export interface NegotiationPrompt {
   item: number
   /** Reference price agreed for that item. */
   price: number
-  /** Half the reference price — the value the household has anchored on. */
-  half: number
 }
 
 export interface DiscussResult {
-  /** Negotiation prompts, one per contested item that has an agreed price. */
+  /** Conversation prompts, one per contested item that has an agreed price. */
   prompts: NegotiationPrompt[]
-  /** Items that are contested but have no agreed price, or have multiple wanters. */
+  /** Contested items with no agreed price — the household needs a number before the app can surface a prompt. */
   unresolved: number[]
 }
 
@@ -206,7 +204,6 @@ export function discuss(
         envied: c.envied,
         item: c.item,
         price,
-        half: price / 2,
       })
     } else {
       unresolvedSet.add(c.item)

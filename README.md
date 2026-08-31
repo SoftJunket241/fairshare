@@ -96,14 +96,13 @@ as conversation prompts, under strict conditions:
   prices were set after you knew who envied what, you could mark "want"
   on an item you don't care about just to tilt the later bargaining. Set
   first and in the open, that play has less room to operate.
-- **The app surfaces prompts, not transfers.** If exactly one person
-  wanted the contested item, the price-sheet card in the result screen
-  names the item, the envier, and the envied, and shows the reference
-  price with half of it as a starting anchor. If two or more people
-  wanted it, the app deliberately proposes nothing — no automatic amount
-  can stand in for a negotiation between people who all want the same
-  thing, so the call is left to the household: split the difference,
-  coin-flip, rotate ownership over time.
+- **The app surfaces prompts, not transfers.** For every contested item
+  with an agreed reference price, FairShare shows the people involved
+  and the shared reference price. It recommends no payer, no recipient,
+  no outcome — the household decides how to resolve it. If an item is
+  contested but no price was agreed, the app flags it explicitly so the
+  household knows a number is missing before they can have that
+  conversation.
 - **The pre-cash split is the part with a mathematical guarantee.** The
   app's EFX check runs against the allocation itself, before any cash
   enters the picture. The prompts below that are a *starting point for
@@ -225,7 +224,7 @@ in for the negotiation, and the app stays silent.
 
 ```
 $ node test-fairdiv.mjs
-fairdiv: ~320 pass, 0 fail
+fairdiv: ~335 pass, 0 fail
 ```
 
 `test-fairdiv.mjs` runs through Node 24's native TypeScript type-stripping

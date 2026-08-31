@@ -831,7 +831,7 @@ function Results({
     if (discussResult && discussResult.prompts.length) {
       txt += `\nDiscussion prompts:\n`
       for (const p of discussResult.prompts) {
-        txt += `  • ${items[p.item]} — ${people[p.envier]} notes it sits in ${people[p.envied]}'s share. Reference price $${p.price.toFixed(0)} (half $${p.half.toFixed(0)}). Talk it over.\n`
+        txt += `  • ${items[p.item]} — ${people[p.envier]} notes it sits in ${people[p.envied]}'s share. Reference price $${p.price.toFixed(0)}. Talk it over.\n`
       }
     }
     txt += `\nFairness: ${v.isEF ? t.fairnessLineEF : t.fairnessLineEFX}\nSplit with FairShare.`
@@ -1240,8 +1240,8 @@ function MoneyCard(props: {
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {props.lang === "vi"
-                        ? `Giá tham khảo đã chốt: $${p.price.toFixed(0)} (một nửa là $${p.half.toFixed(0)}). Đây là điểm bắt đầu, không phải đề xuất thanh toán.`
-                        : `Reference price agreed: $${p.price.toFixed(0)} (half is $${p.half.toFixed(0)}). A starting point, not a payment proposal.`}
+                        ? `Giá tham khảo đã chốt: $${p.price.toFixed(0)}. Đây là điểm bắt đầu, không phải đề xuất thanh toán.`
+                        : `Reference price agreed: $${p.price.toFixed(0)}. A starting point, not a payment proposal.`}
                     </p>
                   </li>
                 ))}
