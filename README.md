@@ -30,7 +30,7 @@ gives a household, in plain terms:
    yes/no ballot is a deliberate trade-off (explained below). The
    mechanism Babaioff, Ezra & Feige (2020) design for these ballots is
    provably truthful — honesty is the best strategy *in their mechanism*.
-   FairShare computes a same-family split and verifies its EFX-ness;
+   FairShare uses a binary allocation routine inspired by this line of work and verifies its EFX result;
    it does not implement their exact mechanism and does not certify
    truthfulness of the running app.
 
@@ -112,9 +112,9 @@ as conversation prompts, under strict conditions:
   prompts honestly and let the household decide.
 
 Money here is not "buying silence" and it is not a claim that cash equals
-sentiment. It is the honest admission that for one class of conflicts —
-sole wanter, indivisible item — a market reference price can give the
-household one shared starting point for negotiation.
+sentiment. It is the honest admission that for a contested indivisible
+item with an agreed reference price, that price can give the household
+one shared starting point for negotiation.
 
 ## How the fairness check talks to you
 
