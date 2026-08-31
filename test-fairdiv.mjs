@@ -67,50 +67,33 @@ for (let t=0; t<100; t++){
 }
 
 // ---------------------------------------------------------------------------
-// settle() — cash settlement for EFX-1 edges.
-// Property: an EFX-1 case is "a envies b for items a is the SOLE wanter of".
-// settle() should propose a half-price cash transfer from a (envier) to b
-// (envied) that closes the gap and produces isEF=true (or, if cash proxy
-// doesn't fully cover, the gap shrinks). Multiple-wanters cases must yield
-// no transfer (settle() stays clean).
+// discuss() — the discussion-prompt helper. With the cash-as-executable-
+// transfer framing removed, discuss() is what the UI calls to surface
+// contested items + the household-agreed reference price. It does not
+// propose a transfer direction; it produces a list of talking points.
 // ---------------------------------------------------------------------------
 
-// (a) Constructed EFX-1 shape: A wants item 0, B does not want it; B gets
-//     item 0, A gets item 1, A wants item 1. Envier A is sole wanter of 0.
+// (a) EFX-1 with a priced item -> one prompt naming the item, the envier,
+//     the envied, the reference price, and half of it. No "from/to" is
+//     emitted — discuss() does not pick a transfer direction.
 {
   const people = ['A','B']
   const items  = ['x','y']
   const wants  = [[true, true], [false, true]]
   const r = m.allocate(people, items, wants)
-  // Force the contested shape: A envies B for item 0, where only A wants 0.
   const contested = [{ envier: 0, envied: 1, item: 0 }]
   const prices = [10, 0]
-  const s = m.settle(people, items, wants, r, prices, contested)
-  assert(s.transfers.length === 1, 'EFX-1 shape: exactly 1 transfer')
-  assert(s.transfers[0].from === 0 && s.transfers[0].to === 1, 'EFX-1: direction envier->envied')
-  assert(Math.abs(s.transfers[0].amount - 5) < 1e-9, `EFX-1: half-price (got ${s.transfers[0].amount})`)
-  // The settle() utility model reports isEF/isEFX from its own (cash-included)
-  // recomputation. The transfer is structurally correct; we just confirm the
-  // result is internally consistent — booleans returned and no NaN.
-  assert(typeof s.isEF === 'boolean' && typeof s.isEFX === 'boolean', 'EFX-1: booleans returned')
-  for (let a=0;a<2;a++) for (let b=0;b<2;b++) if (a!==b) {
-    assert(Number.isFinite(s.envy[a][b]), 'EFX-1: envy entries finite')
-  }
+  const d = m.discuss(people, items, wants, r, prices, contested)
+  assert(d.prompts.length === 1, `EFX-1 priced: 1 prompt (got ${d.prompts.length})`)
+  assert(d.prompts[0].item === 0, 'EFX-1 priced: item index correct')
+  assert(d.prompts[0].envier === 0 && d.prompts[0].envied === 1, 'EFX-1 priced: envier/envied labelled')
+  assert(d.prompts[0].price === 10, 'EFX-1 priced: reference price carried')
+  assert(Math.abs(d.prompts[0].half - 5) < 1e-9, 'EFX-1 priced: half price carried')
+  assert(d.unresolved.length === 0, 'EFX-1 priced: nothing in unresolved')
 }
 
-// (b) Contested but multiple wanters — settle() must NOT propose a transfer.
-{
-  const people = ['A','B','C']
-  const items  = ['x']
-  const wants  = [[true], [true], [false]]
-  const r = m.allocate(people, items, wants)
-  const contested = [{ envier: 1, envied: 0, item: 0 }] // A and B both want x
-  const prices = [10]
-  const s = m.settle(people, items, wants, r, prices, contested)
-  assert(s.transfers.length === 0, 'multi-wanter contested: no transfer')
-}
-
-// (c) EFX-1 with prices all zero -> amount <= 0 -> no transfer.
+// (b) Contested item with price=0 -> not surfaced as a prompt; it lands in
+//     the unresolved list so the UI can flag "no reference price agreed".
 {
   const people = ['A','B']
   const items  = ['x','y']
@@ -118,35 +101,17 @@ for (let t=0; t<100; t++){
   const r = m.allocate(people, items, wants)
   const contested = [{ envier: 0, envied: 1, item: 0 }]
   const prices = [0, 0]
-  const s = m.settle(people, items, wants, r, prices, contested)
-  assert(s.transfers.length === 0, 'all-zero prices: no false transfer')
+  const d = m.discuss(people, items, wants, r, prices, contested)
+  assert(d.prompts.length === 0, 'unpriced contested: no prompt produced')
+  assert(d.unresolved.length === 1 && d.unresolved[0] === 0, 'unpriced contested: item in unresolved')
 }
 
-// (d) Empty contested list -> empty transfers; envy equals the pre-settle
-//     verify() envy (settle with no contested edges is a pure recompute).
-{
-  const people = ['A','B']
-  const items  = ['x','y']
-  const wants  = [[true, true], [true, false]]
-  const r = m.allocate(people, items, wants)
-  const v = m.verify(people, items, wants, r)
-  const s = m.settle(people, items, wants, r, [5, 5], [])
-  assert(s.transfers.length === 0, 'empty contested: empty transfers')
-  for (let a=0;a<2;a++) for (let b=0;b<2;b++) if (a!==b) {
-    assert(s.envy[a][b] === v.envy[a][b], `empty contested: envy unchanged (${a},${b}) settle=${s.envy[a][b]} verify=${v.envy[a][b]}`)
-  }
-  assert(s.isEF === v.isEF, 'empty contested: isEF matches verify')
-}
-
-// (e) Random 3x6 with all prices set; for every EFX-1 edge (envier sole
-//     wanter of the contested item), the transfer is half-price and never
-//     exceeds the per-item price.
+// (c) Random 3x6 with all prices set: every contested item with a price
+//     becomes a prompt, and every prompt's price matches the input.
 for (let t=0; t<100; t++){
   const {people, items, wants:ws} = gen(3, 6);
   const r = m.allocate(people, items, ws);
   const prices = items.map(()=> 1 + Math.floor(Math.random()*20));
-  // Build contested list from verify(): every (a,b) edge with envy>0, every
-  // item b holds that a wants.
   const v = m.verify(people, items, ws, r);
   const contested = [];
   for (let a=0;a<3;a++) for (let b=0;b<3;b++){
@@ -158,16 +123,15 @@ for (let t=0; t<100; t++){
     }
   }
   if (contested.length === 0) continue;
-  const s = m.settle(people, items, ws, r, prices, contested);
-  for (const tr of s.transfers){
-    assert(tr.from !== tr.to, 'transfer: from != to');
-    assert(tr.amount > 0, `transfer: amount > 0 (got ${tr.amount})`);
-    // Each half-price component must not exceed the item's price.
-    for (const i of tr.items){
-      assert(tr.amount >= 0 && tr.amount <= prices[i] + 1e-9,
-        `transfer amount within price bounds (item ${i}, price ${prices[i]}, amount ${tr.amount})`);
-    }
+  const d = m.discuss(people, items, ws, r, prices, contested);
+  for (const p of d.prompts){
+    assert(p.price === prices[p.item], `prompt price matches input (item ${p.item})`);
+    assert(p.half === prices[p.item] / 2, `prompt half correct (item ${p.item})`);
+    assert(p.envier !== p.envied, 'prompt: envier != envied');
   }
+  // The number of priced contested items should equal the number of prompts.
+  const pricedContested = contested.filter(c => (prices[c.item] ?? 0) > 0);
+  assert(d.prompts.length === pricedContested.length, 'prompt count = priced contested count');
 }
 
 console.log(`fairdiv: ${pass} pass, ${fail} fail`);

@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from "react"
 import {
   allocate,
   verify,
-  settle,
+  discuss,
   type AllocationResult,
   type VerifyResult,
-  type SettleResult,
+  type DiscussResult,
 } from "@/lib/fairdiv"
 import { Button } from "@/components/ui/button"
 import {
@@ -818,7 +818,7 @@ function Results({
 
   const gotSomething = v.utilities.filter((u) => u > 0).length
 
-  const [settleResult, setSettleResult] = useState<SettleResult | null>(null)
+  const [discussResult, setDiscussResult] = useState<DiscussResult | null>(null)
 
   function copyResult() {
     let txt = `${t.copyHeader}\n\n`
@@ -828,10 +828,10 @@ function Results({
     })
     if (res.unwanted.length)
       txt += `\nNobody wanted: ${res.unwanted.map((i) => items[i]).join(", ")}\n`
-    if (settleResult) {
-      txt += `\nCash settlement:\n`
-      for (const tr of settleResult.transfers) {
-        txt += `  ${people[tr.from]} → ${people[tr.to]}: $${tr.amount.toFixed(2)} (${tr.items.map((i) => items[i]).join(", ")})\n`
+    if (discussResult && discussResult.prompts.length) {
+      txt += `\nDiscussion prompts:\n`
+      for (const p of discussResult.prompts) {
+        txt += `  • ${items[p.item]} — ${people[p.envier]} notes it sits in ${people[p.envied]}'s share. Reference price $${p.price.toFixed(0)} (half $${p.half.toFixed(0)}). Talk it over.\n`
       }
     }
     txt += `\nFairness: ${v.isEF ? t.fairnessLineEF : t.fairnessLineEFX}\nSplit with FairShare.`
@@ -963,8 +963,8 @@ function Results({
         items={items}
         allContested={allContested}
         prices={prices}
-        settleResult={settleResult}
-        setSettleResult={setSettleResult}
+        discussResult={discussResult}
+        setDiscussResult={setDiscussResult}
         people={people}
         v={v}
         wants={wants}
@@ -1140,8 +1140,8 @@ function MoneyCard(props: {
   items: string[]
   allContested: { envier: number; envied: number; item: number }[]
   prices: number[]
-  settleResult: SettleResult | null
-  setSettleResult: (r: SettleResult | null) => void
+  discussResult: DiscussResult | null
+  setDiscussResult: (r: DiscussResult | null) => void
   people: string[]
   v: VerifyResult
   wants: boolean[][]
@@ -1149,12 +1149,12 @@ function MoneyCard(props: {
   t: typeof STRINGS.vi
   lang: Lang
 }) {
-  const { t, items, prices, allContested, settleResult } = props
+  const { t, items, prices, allContested, discussResult } = props
   const contestedSet = new Set(allContested.map((c) => c.item))
   const anyPriced = prices.some((p) => p > 0)
 
-  function calc() {
-    const r = settle(
+  function buildPrompts() {
+    const r = discuss(
       props.people,
       props.items,
       props.wants,
@@ -1162,7 +1162,7 @@ function MoneyCard(props: {
       props.prices,
       props.allContested,
     )
-    props.setSettleResult(r)
+    props.setDiscussResult(r)
   }
 
   return (
@@ -1175,15 +1175,15 @@ function MoneyCard(props: {
         {!anyPriced ? (
           <p className="text-sm text-muted-foreground">
             {props.lang === "vi"
-              ? "Chưa chốt giá ở màn hình thiết lập — không tính được đền bù. Quay lại bước 1, cùng nhau nhập giá rồi bỏ phiếu lại."
-              : "No prices were agreed on the setup screen — no settlement can be computed. Go back to step 1, agree on prices together, and vote again."}
+              ? "Chưa chốt giá ở màn hình thiết lập — không có con số tham khảo để mở cuộc thương lượng. Quay lại bước 1, cùng nhau nhập giá rồi bỏ phiếu lại."
+              : "No reference prices were agreed at the setup step — there is no number to anchor a conversation on. Go back to step 1, agree on prices together, and vote again."}
           </p>
         ) : (
           <>
             <p className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3 text-xs leading-relaxed text-muted-foreground">
               {props.lang === "vi"
-                ? "Giá này cả nhà đã chốt ở bước 1, trước khi bỏ phiếu — mọi người cùng nhìn thấy cùng một con số tham khảo khi thương lượng. Món đang tranh chấp được viền vàng; đền bù là đề xuất, không phải bảo đảm toán học."
-                : "These prices were agreed by everyone at step 1, before voting — everyone negotiates from the same reference numbers. Contested items are ringed in amber; the settlement is a proposal, not a mathematical guarantee."}
+                ? "Giá này cả nhà đã chốt ở bước 1, trước khi bỏ phiếu — mọi người cùng nhìn thấy cùng một con số tham khảo. Phần dưới chỉ là gợi ý để bắt đầu cuộc trò chuyện, không phải đề xuất thanh toán thực thi được và không phải bảo đảm toán học."
+                : "These prices were agreed by everyone at step 1, before voting — everyone sees the same reference numbers. The prompts below are conversation starters, not executable payments, and not a mathematical guarantee."}
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
               {items.map((it, i) => (
@@ -1203,14 +1203,14 @@ function MoneyCard(props: {
             </div>
 
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button size="sm" className="btn-glow text-white" onClick={calc}>
-                {settleResult ? t.moneyRecalc : t.moneyCalc}
+              <Button size="sm" variant="outline" onClick={buildPrompts}>
+                {discussResult ? t.moneyRecalc : t.moneyCalc}
               </Button>
             </div>
           </>
         )}
 
-        {settleResult && (
+        {discussResult && (
           <div className="space-y-3 rounded-lg border border-violet-400/20 bg-violet-500/5 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-violet-200/90">
               {t.settleHeadline}
@@ -1218,43 +1218,44 @@ function MoneyCard(props: {
             <p className="text-[11px] leading-relaxed text-muted-foreground">
               {t.settleNote}
             </p>
-            {settleResult.transfers.length === 0 ? (
+            {discussResult.prompts.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                {allContested.length === 0
-                  ? (props.lang === "vi"
-                      ? "Không có món tranh chấp — không cần đền bù."
-                      : "No contested items — no settlement needed.")
-                  : t.moneyNone}
+                {props.lang === "vi"
+                  ? "Không có món tranh chấp có giá tham khảo — không cần mở cuộc trò chuyện nào từ phía app."
+                  : "No contested item has a reference price yet — the app has nothing to start a conversation on."}
               </p>
             ) : (
               <ul className="space-y-2">
-                {settleResult.transfers.map((tr, i) => (
-                  <li key={i} className="flex items-center justify-between text-sm">
-                    <span>
-                      <span className="font-semibold text-violet-200">
-                        {t.moneyTransferLabel(props.people[tr.from], props.people[tr.to])}
-                      </span>
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        ({tr.items.map((i) => props.items[i]).join(", ")})
-                      </span>
-                    </span>
-                    <span className="rounded-md bg-violet-500/15 px-2 py-0.5 font-mono text-violet-100">
-                      ${tr.amount.toFixed(2)}
-                    </span>
+                {discussResult.prompts.map((p, i) => (
+                  <li
+                    key={i}
+                    className="rounded-md bg-white/[0.04] px-3 py-2 text-sm leading-relaxed"
+                  >
+                    <p>
+                      <strong className="text-violet-200">{props.people[p.envier]}</strong>{" "}
+                      {props.lang === "vi" ? "ghi nhận" : "notes"}{" "}
+                      <strong>{props.items[p.item]}</strong>{" "}
+                      {props.lang === "vi" ? "nằm trong phần của" : "sits in"}{" "}
+                      <strong>{props.people[p.envied]}</strong>.
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {props.lang === "vi"
+                        ? `Giá tham khảo đã chốt: $${p.price.toFixed(0)} (một nửa là $${p.half.toFixed(0)}). Đây là điểm bắt đầu, không phải đề xuất thanh toán.`
+                        : `Reference price agreed: $${p.price.toFixed(0)} (half is $${p.half.toFixed(0)}). A starting point, not a payment proposal.`}
+                    </p>
                   </li>
                 ))}
               </ul>
             )}
+            {discussResult.unresolved.length > 0 && (
+              <p className="text-[11px] leading-relaxed text-amber-300/90">
+                {props.lang === "vi"
+                  ? `Món sau tranh chấp nhưng chưa có giá tham khảo — cả nhà chốt giá trước khi thương lượng: ${discussResult.unresolved.map((i) => props.items[i]).join(", ")}.`
+                  : `Contested but with no reference price — agree on a number before negotiating: ${discussResult.unresolved.map((i) => props.items[i]).join(", ")}.`}
+              </p>
+            )}
             <p className="text-[11px] leading-relaxed text-muted-foreground">
               {t.moneyNote}
-            </p>
-            <p className="text-xs">
-              <span className="font-semibold text-violet-200">{t.moneyAfter}</span>{" "}
-              <span className="text-muted-foreground">
-                {props.lang === "vi"
-                  ? "Đây là đề xuất thương lượng. Máy không chứng minh bảo đảm EFX cho phần có tiền — đó là quyết định của cả nhà."
-                  : "This is a proposed split. The app does not certify EFX for the post-cash row — that call is the household's."}
-              </span>
             </p>
           </div>
         )}

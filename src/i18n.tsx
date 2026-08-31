@@ -78,9 +78,6 @@ type StringDict = {
   moneyNote: string
   priceSheetHint: string
   priceSheetClose: string
-  moneyTransferLabel: (a: string, b: string) => string
-  moneyAfter: string
-  moneyStillContested: string
   graphTitle: string
   graphDesc: string
   graphLegend: { got: string; want: string; contested: string }
@@ -136,7 +133,7 @@ export const STRINGS: Record<Lang, StringDict> = {
     done: "Xong →",
 
     efBadge: "✓ Không ghen tị — không ai ước mình được phần của người khác",
-    efxBadge: "≈ Công bằng theo nghĩa EFX (bỏ đi một món thì hết ghen tị)",
+    efxBadge: "≈ Công bằng theo nghĩa EFX (bỏ đi một món liên quan trong phần kia thì hết ghen tị)",
     efxHeadline: "Đây là cách chia mà máy đề xuất — máy cũng tự kiểm lại.",
     resultTitle: "Đây là", resultTitleSpan: "cách chia",
     resultSub: (got: number, n: number, m: number) =>
@@ -151,7 +148,7 @@ export const STRINGS: Record<Lang, StringDict> = {
     efxWhat: (
       <>
         <strong className="text-foreground">EFX</strong> nghĩa là{" "}
-        <em>không ghen tị tới bấc kì một món nào</em>: ở bất kỳ cặp so sánh nào còn ghen
+        <em>không ghen tị tới bất kỳ một món nào</em>: ở bất kỳ cặp so sánh nào còn ghen
         tị, bạn đều có thể chỉ ra một món trong phần của người kia mà nếu món đó bị
         bỏ đi, bạn không còn thấy phần kia hơn phần mình. Đó là bảo đảm mạnh cho
         hàng hoá không thể chia, trong bối cảnh sở thích nhị phân (muốn / không
@@ -175,9 +172,9 @@ export const STRINGS: Record<Lang, StringDict> = {
         Một cách chia hoàn toàn không ghen tị không tồn tại với tập muốn này (có món ai cũng muốn mà không thể cắt đôi). Ở những cặp còn ghen tị, bạn đều chỉ ra được một món trong phần kia mà nếu bỏ món đó đi thì hết ghen tị — với sở thích nhị phân và đồ không thể chia, đây là một bảo đảm công bằng mạnh.
       </>
     ),
-    settleHeadline: "💡 Đề xuất đền bù — để cả nhà cân nhắc",
+    settleHeadline: "💡 Gợi ý mở đầu thương lượng",
     settleNote:
-      "Đây là đề xuất thương lượng, không phải kết luận toán học: tiền không nằm trong kết quả gốc của bài báo, và việc đổi tiền lấy món là do cả nhà tự quyết. Máy chỉ đảm bảo phần chia trước khi có tiền đã thoả EFX; phần tiền là công cụ hỗ trợ, không phải phần của bảo đảm.",
+      "Đây là điểm bắt đầu cuộc trò chuyện, không phải đề xuất thanh toán: app không định hướng ai trả ai, không tính toán đồng tiền nào, và không gắn kết quả có tiền với bất kỳ bảo đảm toán học nào. Phần chia trước khi có tiền là phần app kiểm tra EFX; từ đây trở đi là việc của cả nhà.",
     reVote: "Bỏ phiếu lại",
     startOver: "Bắt đầu lại",
     copy: "Sao chép kết quả",
@@ -225,24 +222,21 @@ export const STRINGS: Record<Lang, StringDict> = {
     presets: "Tình huống có sẵn",
     presetRoommates: "Chuyển nhà chung",
     presetStartup: "Startup tan rã",
-    presetTrip: "Sau chuyển đi",
+    presetTrip: "Sau chuyến đi",
     presetClub: "CLB cuối năm",
 
-    moneyTitle: "💸 Đền bù món tranh chấp",
+    moneyTitle: "💸 Món tranh chấp — gợi ý mở đầu thương lượng",
     moneyDesc: "giá do cả nhà cùng nhập, trước khi bấm chia — không phải do một người tự quyết",
     moneyAdd: "+ Mở bảng giá",
-    moneyCalc: "Tính đền bù",
-    moneyRecalc: "Tính lại",
+    moneyCalc: "Gợi ý để thương lượng",
+    moneyRecalc: "Gợi ý lại",
     moneyNone:
-      "Món nhiều người cùng muốn không được đền bù tự động — máy cố tình không đề xuất; cả nhà thương lượng, tung đồng xu, hoặc luân phiên.",
+      "Món nhiều người cùng muốn không được app đề xuất — cả nhà thương lượng, tung đồng xu, hoặc luân phiên.",
     moneyNote:
-      "Tiền không nằm trong kết quả của bài báo gốc — đây là công cụ thương lượng của app, không phải phần của bảo đảm toán học. Giá do cả nhà chốt trước khi bỏ phiếu, nên mọi người cùng nhìn thấy cùng một con số tham khảo. Với món chỉ một người muốn, người kia nhận nửa giá — một bên giữ đồ, một bên giữ tiền. Món nhiều người cùng muốn thì máy không đề xuất; cả nhà tự quyết.",
+      "Tiền không nằm trong kết quả của bài báo gốc — đây là công cụ thương lượng của app, không phải phần của bảo đảm toán học. Giá do cả nhà chốt trước khi bỏ phiếu, nên mọi người cùng nhìn thấy cùng một con số tham khảo. Món nhiều người cùng muốn thì app không đề xuất hướng giải quyết; cả nhà tự quyết.",
     priceSheetHint:
-      "Mở nếu có khả năng sẽ tranh chấp. Cả nhà cùng chốt giá tham khảo cho từng món NGAY BÂY GIỜ, trước khi bỏ phiếu — vì giá chốt sau khi biết ai ghen ai sẽ mở cửa cho thương lượng lệch lạc. Bỏ trống cũng được; bạn có thể quay lại bước này bất cứ lúc nào.",
+      "Mở nếu có khả năng sẽ tranh chấp. Cả nhà cùng chốt giá tham khảo cho từng món NGAY BÂY GIỜ, trước khi bỏ phiếu — vì giá chốt sau khi biết ai ghen ai sẽ làm cuộc thương lượng sau đó kém minh bạch. Bỏ trống cũng được; bạn có thể quay lại bước này bất cứ lúc nào.",
     priceSheetClose: "Đóng bảng giá",
-    moneyTransferLabel: (a: string, b: string) => `${a} trả ${b}`,
-    moneyAfter: "Sau khi đền bù:",
-    moneyStillContested: "Vẫn còn ghen tị — tăng giá món tranh chấp hoặc dùng đồng xu.",
 
     graphTitle: "🕸 Bản đồ chia đồ",
     graphDesc: "ai nhận được gì, ai bỏ lỡ món mình muốn",
@@ -354,9 +348,9 @@ export const STRINGS: Record<Lang, StringDict> = {
         it — a strong fairness guarantee, for indivisible goods and binary wants.
       </>
     ),
-    settleHeadline: "💡 Proposed settlement — for the household to weigh",
+    settleHeadline: "💡 Conversation prompts",
     settleNote:
-      "This is a negotiation aid, not a mathematical conclusion: cash is not part of the original paper's result, and swapping money for an item is the household's own call. The app guarantees only that the pre-cash split satisfies EFX; the cash row is a supporting tool, not part of the guarantee.",
+      "These are starting points for a talk, not payment proposals: the app picks no payer, no payee, no amount, and attaches no mathematical guarantee to any cash outcome. The pre-cash split is the part the app checks against EFX; from here on it's the household's call.",
     reVote: "Re-vote",
     startOver: "Start over",
     copy: "Copy result",
@@ -408,21 +402,18 @@ export const STRINGS: Record<Lang, StringDict> = {
     presetTrip: "After a trip",
     presetClub: "Year-end club",
 
-    moneyTitle: "💸 Settle contested items",
+    moneyTitle: "💸 Contested items — conversation prompts",
     moneyDesc: "prices the whole household agrees on, entered before the split runs — never decided by one person",
     moneyAdd: "+ Open the price sheet",
-    moneyCalc: "Settle",
-    moneyRecalc: "Recalculate",
+    moneyCalc: "Show prompts",
+    moneyRecalc: "Re-list",
     moneyNone:
-      "Items more than one person wanted get no automatic settlement — the app deliberately proposes nothing; the household negotiates, coin-flips, or takes turns.",
+      "Items several people wanted are not proposed on by the app — the household negotiates, coin-flips, or takes turns.",
     moneyNote:
-      "Cash is not part of the original paper's result — it's a negotiation tool this app adds, not part of the mathematical guarantee. Prices are agreed by everyone before voting, so everyone is negotiating from the same reference numbers. For an item only one person wanted, the other side receives half its price — one keeps the item, one keeps the money. For items several people wanted, the app proposes nothing; that call is the household's.",
+      "Cash is not part of the original paper's result — it's a negotiation tool this app adds, not part of the mathematical guarantee. Prices are agreed by everyone before voting, so everyone is talking from the same reference numbers. Items several people wanted have no app-side proposal; that call is the household's.",
     priceSheetHint:
-      "Open this if a dispute is likely. Agree on a reference price for each item NOW, before anyone votes — prices set after you know who envies whom would tilt the negotiation. Leaving it empty is fine; you can come back to this step at any time.",
+      "Open this if a dispute is likely. Agree on a reference price for each item NOW, before anyone votes — prices set after you know who envies whom would make the later bargaining less transparent. Leaving it empty is fine; you can come back to this step at any time.",
     priceSheetClose: "Close the price sheet",
-    moneyTransferLabel: (a: string, b: string) => `${a} pays ${b}`,
-    moneyAfter: "After settlement:",
-    moneyStillContested: "Envy remains — raise the price on contested items, or coin-flip.",
 
     graphTitle: "🕸 The split, mapped",
     graphDesc: "who got what, and who missed the item they wanted",

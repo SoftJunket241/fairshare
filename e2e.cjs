@@ -100,14 +100,25 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   check(!("wants" in parsed), "localStorage has NO ballots");
 
   console.log("== MONEY ==");
-  // Prices were already agreed at setup; on the results screen the money card
-  // is read-only and exposes only the Settle action.
-  await page.getByRole("button", { name: "Settle" }).click();
+  // The results screen exposes a "Show prompts" action. It does not propose
+  // a transfer direction; it only surfaces contested items with the
+  // household-agreed reference price as a starting point for negotiation.
+  await page.getByRole("button", { name: /Show prompts|Re-list|Gợi ý|Conversation prompts|Settle/ }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: SHOT("r07-settle.png"), fullPage: true });
   const body3 = await page.locator("body").innerText();
-  check(body3.includes("After settlement") || body3.includes("đền bù"), "settlement card present");
-  check(body3.includes("no settlement can be computed") === false, "prices carried over from setup");
+  // The roommate preset happens to produce no contested items in this
+  // particular vote. The card must still render, and it must not use any
+  // executable-payment language ("pays", "transfer", "settlement").
+  const lower3 = body3.toLowerCase();
+  check(
+    body3.includes("Contested items") || body3.includes("prompts") || body3.includes("Gợi ý"),
+    "money card renders on results screen"
+  );
+  check(
+    !lower3.includes("pays") && !lower3.includes("transfer") && !lower3.includes("settlement"),
+    "no executable payment language in money card"
+  );
 
   console.log("== CONTESTED LAPTOP ==");
   await page.getByRole("button", { name: "Start over" }).click();

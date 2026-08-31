@@ -89,17 +89,17 @@ item, with a fair split already settled around it.
 ### 2. Cash can price an item, not a feeling
 
 Some splits end with a contested item and no envy-free solution. FairShare
-won't pretend otherwise. It offers the one tool that exists for indivisible
-goods — money — under strict conditions, and tells you honestly whether
-even that closed the gap:
+won't pretend otherwise. It offers an optional negotiation tool — money —
+under strict conditions, and tells you honestly whether even that closed
+the gap:
 
 - **Prices come from the household, together, before voting.** The price
   sheet is filled in the open, by everyone, *before* the split runs —
-  never quietly by one person after the fact. Agreeing on a market
-  reference price up front is what keeps the ballot honest: if prices
-  were set after you knew who envied what, you could mark "want" on an
-  item you don't care about just to collect a settlement. Set first and
-  in the open, that play stops being worth anything.
+  never quietly by one person after the fact. Agreeing on a reference
+  price before voting makes the later negotiation more transparent: if
+  prices were set after you knew who envied what, you could mark "want"
+  on an item you don't care about just to tilt the later bargaining. Set
+  first and in the open, that play has less room to operate.
 - **Cash only applies where it is honest.** If exactly one person wanted
   the contested item, the other side receives **half its agreed price**:
   one side keeps the item, the other keeps the money, and the two come
@@ -117,8 +117,8 @@ even that closed the gap:
 
 Money here is not "buying silence" and it is not a claim that cash equals
 sentiment. It is the honest admission that for one class of conflicts —
-sole wanter, indivisible item — a market reference price is the only
-conversion that both sides can verify.
+sole wanter, indivisible item — a market reference price can give the
+household one shared starting point for negotiation.
 
 ## How the fairness check talks to you
 
@@ -164,28 +164,43 @@ promise — it's all below.
 
 **The result being used.** For *dichotomous* (binary) valuations — every
 item either wanted or not — Babaioff, Ezra & Feige (2020), *Fair and
-Truthful Mechanisms for Dichotomous Valuations*, show that a
-**Lorenz-dominating** allocation is simultaneously EFX, EF1, max Nash
-welfare, max utilitarian welfare, and truthful. In their paper,
-"truthful" is a property of the *mechanism* — a participant's dominant
-strategy is to report honestly. FairShare does not implement that exact
-mechanism, so it does not inherit the truthfulness property as a
-guarantee; it does inherit the EFX / EF1 / welfare family of properties
-for the *kind* of allocation it computes, and `verify()` checks EFX
-against the result.
+Truthful Mechanisms for Dichotomous Valuations*, design a mechanism
+they call the Prior-free EFX (PE) mechanism. The PE mechanism is
+*truthful*: a participant's dominant strategy is to report honestly.
+When agents do report truthfully, the PE mechanism returns a
+Lorenz-dominating allocation; that allocation has EFX, EF1, max Nash
+welfare, and max utilitarian welfare properties. (Those are
+properties of the *output*, not of the mechanism itself.) FairShare
+does not implement the PE mechanism, so it does not claim any of
+those properties as guarantees about the running app. What FairShare
+*does* guarantee is narrower:
 
-**How the engine finds it.** `src/lib/fairdiv.ts` computes a leximin /
-Lorenz-dominating allocation via cost-reducing augmenting paths — the
-optimal semi-matching technique of Harvey et al.:
+- FairShare independently checks EFX on the allocation it returns.
+  The check is run on the actual ballots and the actual result, in
+  front of you, every time.
+- FairShare does **not** currently claim a formal equivalence to PE,
+  to Lorenz domination, to welfare optimality, or to truthfulness.
+  Every further property of the theory needs assumptions the app
+  has not been audited against.
+
+**How the engine finds it.** `src/lib/fairdiv.ts` uses a deterministic
+leximin-style allocation routine inspired by augmenting-path
+techniques (the optimal semi-matching line of work, including Harvey
+et al.):
 
 1. Greedy warm start: give each wanted item to the wanter with the
    smallest current load.
 2. Repeatedly find an augmenting path that drops the highest-loaded
    person's load by 2, walking through items each person holds and would
    swap for a wanted one. Apply the path.
-3. Stop when no reducing path exists: the load vector is leximin-optimal,
-   which is exactly the state the paper proves is EFX for binary
-   valuations.
+3. Stop when no reducing path exists.
+
+The result is a load vector that is leximin-small. We are *not*
+asserting that the implementation is a faithful reproduction of the
+PE mechanism or of any specific Lorenz-dominating routine from the
+literature; the EFX property of the output is what `verify()` checks
+on every run, and the only mathematical claim attached to the result
+is that one.
 
 **The verifier.** `verify()` is independent of `allocate()`: given the
 wants matrix and the allocation, it recomputes every utility, every envy
@@ -195,18 +210,20 @@ answer to *"if you swapped shares, would you actually receive more of
 the things you wanted?"* Nothing about the result is taken on trust;
 every number shown is recomputed from the ballots.
 
-**Cash settlement.** `settle()` inspects the contested edges the verifier
+**Cash settlement.** `discuss()` inspects the contested edges the verifier
 flags. For each edge where the envier is the **sole** wanter of every
-contested item, it proposes `sum(prices[i] / 2)` from envier to envied.
-Cash is not part of the original paper's result: the prices are a
-negotiation tool this app adds on top, agreed by the household before
-voting, and the post-settlement row is a *proposed split*, not a
-guarantee. The pre-cash allocation is the part that the paper's EFX
-guarantee attaches to; with cash in the mix, the app stops short of
-certifying EFX and leaves the final call to the household. Edges with
-multiple wanters produce no transfer, by design: when several people
-all want the same item, no automatic cash amount can stand in for the
-negotiation, and the app stays silent.
+contested item and the household has agreed a reference price, it surfaces
+a conversation prompt naming the envier, the envied, the item, and the
+reference price (with half of it as an anchor). Items with no agreed price
+land in an unresolved list the UI flags explicitly. The function proposes
+no payer, no payee, no amount. Cash is not part of the original paper's
+result: the prices are a negotiation tool this app adds on top, agreed by
+the household before voting, and the prompts are a *starting point for a
+conversation*, not a guarantee. The pre-cash allocation is the part that
+the paper's EFX guarantee attaches to; the cash row is the household's own
+call. Edges with multiple wanters produce no prompt, by design: when
+several people all want the same item, no automatic suggestion can stand
+in for the negotiation, and the app stays silent.
 
 ## How the tests work
 
@@ -224,11 +241,12 @@ fairdiv: 276 pass, 0 fail
   the bundles the allocator returned.
 - 100 random 5×10 trials, asserting the engine doesn't crash and the
   booleans are booleans.
-- A dedicated `settle()` block: EFX-1 shape → exactly one transfer at
-  half-price; multi-wanter contested → no transfer; all-zero prices → no
-  transfer; empty contested → envy matches `verify()`; 100 random 3×6
-  trials confirming every transfer's amount is within the per-item price
-  bounds.
+- A dedicated `discuss()` block: every contested item with an agreed price
+  becomes a conversation prompt labelled by envier, envied, item, and
+  reference price; items with no price land in an unresolved list; the
+  function proposes no payer, no payee, no amount.
+- 100 random 3×6 trials confirming every prompt's price matches the input
+  and the half-price anchor is half the reference price.
 
 ```
 $ node e2e.cjs

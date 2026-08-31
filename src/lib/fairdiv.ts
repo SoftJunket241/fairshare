@@ -168,89 +168,49 @@ export function verify(
   return { utilities, envy, isEF, isEFX, nashWelfare, utilitarian, worstOff }
 }
 
-export interface Transfer {
-  from: number
-  to: number
-  amount: number
-  items: number[]
+export interface NegotiationPrompt {
+  /** Person who, on the EFX check, would still want at least one item in the other's share. */
+  envier: number
+  /** Person whose share contains the contested item. */
+  envied: number
+  /** Contested item. */
+  item: number
+  /** Reference price agreed for that item. */
+  price: number
+  /** Half the reference price — the value the household has anchored on. */
+  half: number
 }
 
-export interface SettleResult {
-  transfers: Transfer[]
-  utilities: number[]
-  isEF: boolean
-  isEFX: boolean
-  envy: number[][]
+export interface DiscussResult {
+  /** Negotiation prompts, one per contested item that has an agreed price. */
+  prompts: NegotiationPrompt[]
+  /** Items that are contested but have no agreed price, or have multiple wanters. */
+  unresolved: number[]
 }
 
-export function settle(
-  people: string[],
+export function discuss(
+  _people: string[],
   _items: string[],
-  wants: boolean[][],
-  result: AllocationResult,
+  _wants: boolean[][],
+  _result: AllocationResult,
   prices: number[],
   contested: { envier: number; envied: number; item: number }[],
-): SettleResult {
-  const n = people.length
-
-  const edgeItems = new Map<string, number[]>()
-  const key = (a: number, b: number) => `${a}->${b}`
+): DiscussResult {
+  const prompts: NegotiationPrompt[] = []
+  const unresolvedSet = new Set<number>()
   for (const c of contested) {
-    const k = key(c.envier, c.envied)
-    const arr = edgeItems.get(k) ?? []
-    arr.push(c.item)
-    edgeItems.set(k, arr)
-  }
-
-  const transfers: Transfer[] = []
-  for (const [k, itemList] of edgeItems) {
-    const [aStr, bStr] = k.split("->")
-    const a = Number(aStr)
-    const b = Number(bStr)
-    const onlyWanter = itemList.every(
-      (i) => wants[a][i] && !wants.some((w, p) => p !== a && w[i]),
-    )
-    if (!onlyWanter) continue
-    const amount = itemList.reduce((s, i) => s + (prices[i] ?? 0) / 2, 0)
-    if (amount <= 0) continue
-    transfers.push({ from: a, to: b, amount, items: itemList })
-  }
-
-  const cash: number[] = new Array(n).fill(0)
-  for (const t of transfers) cash[t.to] += t.amount
-
-  const valueOf = (a: number, itemList: number[]) =>
-    itemList.reduce((s, i) => s + (wants[a][i] ? 1 : 0), 0)
-
-  const medianPrice = (() => {
-    const ps = prices.filter((p) => p > 0).slice().sort((x, y) => x - y)
-    if (ps.length === 0) return 0
-    return ps[Math.floor(ps.length / 2)] || 1
-  })()
-  const utilities = new Array<number>(n).fill(0)
-  for (let p = 0; p < n; p++) {
-    utilities[p] = valueOf(p, result.bundles[p])
-    if (medianPrice > 0) utilities[p] += cash[p] / medianPrice
-  }
-
-  const envy: number[][] = Array.from({ length: n }, () =>
-    new Array<number>(n).fill(0),
-  )
-  let isEF = true
-  let isEFX = true
-  for (let a = 0; a < n; a++) {
-    for (let b = 0; b < n; b++) {
-      if (a === b) continue
-      const own = utilities[a]
-      const other = valueOf(a, result.bundles[b]) + (cash[b] > 0 ? cash[b] / medianPrice : 0)
-      const diff = other - own
-      envy[a][b] = diff
-      if (diff > 0) {
-        isEF = false
-        if (diff > 1) isEFX = false
-      }
+    const price = prices[c.item] ?? 0
+    if (price > 0) {
+      prompts.push({
+        envier: c.envier,
+        envied: c.envied,
+        item: c.item,
+        price,
+        half: price / 2,
+      })
+    } else {
+      unresolvedSet.add(c.item)
     }
   }
-
-  return { transfers, utilities, isEF, isEFX, envy }
+  return { prompts, unresolved: [...unresolvedSet] }
 }
