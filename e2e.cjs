@@ -7,6 +7,27 @@ const dir = path.resolve(__dirname, "shots");
 fs.mkdirSync(dir, { recursive: true });
 const SHOT = (n) => path.join(dir, n);
 
+// A sticky header is useful in the live app, but Playwright's full-page
+// stitching captures it at the current scroll position. Temporarily make it
+// static so screenshots show one clean header at the top of the document.
+async function fullPageShot(page, name) {
+  const header = page.locator("header.sticky");
+  await header.evaluate((el) => {
+    el.dataset.e2eOriginalStyle = el.getAttribute("style") || "";
+    el.style.position = "static";
+  });
+  try {
+    await page.screenshot({ path: SHOT(name), fullPage: true });
+  } finally {
+    await header.evaluate((el) => {
+      const original = el.dataset.e2eOriginalStyle || "";
+      if (original) el.setAttribute("style", original);
+      else el.removeAttribute("style");
+      delete el.dataset.e2eOriginalStyle;
+    });
+  }
+}
+
 let fail = 0;
 const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) fail++; };
 
@@ -90,7 +111,7 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   await page.evaluate(() => window.scrollTo({ top: 1400 }));
   await page.waitForTimeout(200);
   await page.screenshot({ path: SHOT("r06-results-money.png") });
-  await page.screenshot({ path: SHOT("r06-results-full.png"), fullPage: true });
+  await fullPageShot(page, "r06-results-full.png");
   const verdict = await page.locator("body").innerText();
   check(verdict.includes("Here's") || verdict.includes("the split"), "results screen shown");
   check(verdict.includes("The split, mapped") || verdict.includes("bản đồ"), "graph card present");
@@ -105,7 +126,7 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   // household-agreed reference price as a starting point for negotiation.
   await page.getByRole("button", { name: /Show prompts|Re-list|Gợi ý|Conversation prompts|Settle/ }).click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: SHOT("r07-settle.png"), fullPage: true });
+  await fullPageShot(page, "r07-settle.png");
   const body3 = await page.locator("body").innerText();
   // The roommate preset happens to produce no contested items in this
   // particular vote. The card must still render, and it must not use any
@@ -166,7 +187,7 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   const lowerP = bodyPrompts.toLowerCase();
   check(bodyPrompts.includes("Laptop"), "prompts list names the contested item");
   check(!lowerP.includes("pays") && !lowerP.includes("transfer") && !lowerP.includes("settlement"), "no executable payment language in prompts card");
-  await page.screenshot({ path: SHOT("r08-contested.png"), fullPage: true });
+  await fullPageShot(page, "r08-contested.png");
 
   console.log("== ERRORS ==");
   check(errors.length === 0, `no JS errors (${errors.length})`);
