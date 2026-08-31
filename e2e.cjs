@@ -156,14 +156,15 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   check(body2.includes("EFX"), "contested shows EFX verdict");
   check(body2.includes("Laptop"), "explanation names Laptop");
 
-  // Open the discussion prompts and verify: contested item appears in the
-  // unresolved list (two people want it, so no prompt is produced), and
-  // there is still no executable-payment language.
+  // Open the discussion prompts and verify: the contested item appears in
+  // the prompts list (it has an agreed price, so discuss() surfaces it
+  // regardless of how many people want it), and there is still no
+  // executable-payment language.
   await page.getByRole("button", { name: /Show prompts|Re-list|Conversation prompts|Settle|Gợi ý/ }).click();
   await page.waitForTimeout(300);
   const bodyPrompts = await page.locator("body").innerText();
   const lowerP = bodyPrompts.toLowerCase();
-  check(bodyPrompts.includes("Laptop"), "unresolved list names the contested item");
+  check(bodyPrompts.includes("Laptop"), "prompts list names the contested item");
   check(!lowerP.includes("pays") && !lowerP.includes("transfer") && !lowerP.includes("settlement"), "no executable payment language in prompts card");
   await page.screenshot({ path: SHOT("r08-contested.png"), fullPage: true });
 

@@ -206,25 +206,22 @@ the things you wanted?"* Nothing about the result is taken on trust;
 every number shown is recomputed from the ballots.
 
 **Conversation prompts.** `discuss()` inspects the contested edges the verifier
-flags. For each edge where the envier is the **sole** wanter of every
-contested item and the household has agreed a reference price, it surfaces
-a conversation prompt naming the envier, the envied, the item, and the
-reference price (with half of it as an anchor). Items with no agreed price
-land in an unresolved list the UI flags explicitly. The function proposes
-no payer, no payee, no amount. Cash is not part of the original paper's
-result: the prices are a negotiation tool this app adds on top, agreed by
-the household before voting, and the prompts are a *starting point for a
+flags. For each contested item where the household has agreed a reference
+price, it surfaces a conversation prompt naming the envier, the envied,
+the item, and the reference price. Items with no agreed price land in an
+unresolved list the UI flags explicitly. The function proposes no payer,
+no payee, no amount. Cash is not part of the original paper's result:
+the prices are a negotiation tool this app adds on top, agreed by the
+household before voting, and the prompts are a *starting point for a
 conversation*, not a guarantee. The pre-cash allocation is the part that
 the paper's EFX guarantee attaches to; the cash row is the household's own
-call. Edges with multiple wanters produce no prompt, by design: when
-several people all want the same item, no automatic suggestion can stand
-in for the negotiation, and the app stays silent.
+call.
 
 ## How the tests work
 
 ```
 $ node test-fairdiv.mjs
-fairdiv: ~335 pass, 0 fail
+fairdiv: property tests pass, 0 fail
 ```
 
 `test-fairdiv.mjs` runs through Node 24's native TypeScript type-stripping
