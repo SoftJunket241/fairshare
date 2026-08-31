@@ -2,7 +2,10 @@
 import * as m from './src/lib/fairdiv.ts';
 
 function shuffle(a) { for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
-function rbool(p=0.4){ return Math.random()<p; }
+let seed = 42;
+function srand(s) { seed = s; }
+function rand() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+function rbool(p=0.4){ return rand()<p; }
 
 let pass=0, fail=0; const fails=[];
 function assert(c, msg){
@@ -47,6 +50,7 @@ for (let mask=0; mask<16; mask++){
 }
 
 // Random 3x6 — 200 trials
+srand(42);
 for (let t=0; t<200; t++){
   const {people, items, wants:ws}=gen(3,6);
   const r=m.allocate(people, items, ws);
@@ -56,14 +60,17 @@ for (let t=0; t<200; t++){
       assert(false,`envy[${a}][${b}]=${v.envy[a][b]} but no overlapping wanted item`);
     }
   }
+  assert(v.isEFX===true,`3x6 EFX fail trial=${t}`);
 }
 
 // Random 5x10 — 100 trials, just don't crash
+srand(42);
 for (let t=0; t<100; t++){
   const {people, items, wants:ws}=gen(5,10);
   const r=m.allocate(people, items, ws);
   const v=m.verify(people, items, ws, r);
   assert(typeof v.isEF==='boolean' && typeof v.isEFX==='boolean', 'returns booleans');
+  assert(v.isEFX===true,`5x10 EFX fail trial=${t}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -107,6 +114,7 @@ for (let t=0; t<100; t++){
 
 // (c) Random 3x6 with all prices set: every contested item with a price
 //     becomes a prompt, and every prompt's price matches the input.
+srand(42);
 for (let t=0; t<100; t++){
   const {people, items, wants:ws} = gen(3, 6);
   const r = m.allocate(people, items, ws);

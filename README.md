@@ -230,15 +230,18 @@ fairdiv: property tests pass, 0 fail
 - 16-mask exhaustive sweep over 2×2 dichotomies (the "universal truth"
   that EFX is always achievable for 2×2 binary).
 - 200 random 3×6 trials, asserting the verifier's envy matrix matches
-  the bundles the allocator returned.
-- 100 random 5×10 trials, asserting the engine doesn't crash and the
-  booleans are booleans.
+  the bundles the allocator returned **and that `isEFX` is true**.
+- 100 random 5×10 trials, asserting the engine doesn't crash, the
+  booleans are booleans, **and `isEFX` is true**.
 - A dedicated `discuss()` block: every contested item with an agreed price
   becomes a conversation prompt labelled by envier, envied, item, and
   reference price; items with no price land in an unresolved list; the
   function proposes no payer, no payee, no amount.
 - 100 random 3×6 trials confirming every prompt's price matches the input
-  and the prompt's price matches the input price.
+  price.
+
+All random blocks are seeded (LCG, seed 42), so every run reproduces
+the same trials — the pass count is stable.
 
 ```
 $ node e2e.cjs
