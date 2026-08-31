@@ -33,12 +33,9 @@ gives a household, in plain terms:
    it does not implement their exact mechanism and does not certify
    truthfulness of the running app.
 
-3. **A split that wastes nothing.** The family of allocations the engine
-   computes is the efficient one for binary ballots: no reassignment could
-   give someone more of what they wanted without taking from someone else
-   who wanted it. This efficiency property is a property of the
-   allocation family (proved in the literature), not something the app
-   re-checks per run — the per-run check is the EFX one.
+3. **A result you can inspect.** FairShare shows who received each item
+   and independently checks the EFX condition from the ballots. It does
+   not ask the household to trust an unexplained score.
 
 4. **An answer to "why did they get it and not me?"** Right under the
    result, FairShare re-checks its own work and answers, for every pair of
@@ -48,9 +45,9 @@ gives a household, in plain terms:
 
 5. **No favoritism by code.** The split isn't computed by whoever argues
    loudest, or by a heuristic that happens to prefer whoever entered the
-   data. It's computed by a fixed rule with a published proof behind it,
-   from Babaioff, Ezra & Feige (2020), and the result is independent of
-   who runs the app.
+   data. It is computed by a deterministic, published rule and checked
+   against the EFX definition on the result shown. The result is
+   independent of who runs the app.
 
 That last item is worth dwelling on, because it is the actual product. A
 splitting app that says *"trust us, it's fair"* is asking for the same leap
@@ -90,8 +87,7 @@ item, with a fair split already settled around it.
 
 Some splits end with a contested item and no envy-free solution. FairShare
 won't pretend otherwise. It offers an optional negotiation tool — money —
-as conversation prompts, under strict conditions, and tells you honestly
-whether even that closed the gap:
+as conversation prompts, under strict conditions:
 
 - **Prices come from the household, together, before voting.** The price
   sheet is filled in the open, by everyone, *before* the split runs —
@@ -163,10 +159,10 @@ check the machinery — the citations, the algorithm, the proofs behind each
 promise — it's all below.
 
 **The result being used.** For *dichotomous* (binary) valuations — every
-item either wanted or not — Babaioff, Ezra & Feige (2020), *Fair and
-Truthful Mechanisms for Dichotomous Valuations*, design a mechanism
-they call the Prior-free EFX (PE) mechanism. The PE mechanism is
-*truthful*: a participant's dominant strategy is to report honestly.
+item either wanted or not — Babaioff, Ezra & Feige (2020), [*Fair and
+Truthful Mechanisms for Dichotomous Valuations*](https://doi.org/10.1145/3391403.3399487), design a mechanism
+they call the Prioritized Egalitarian (PE) mechanism. The PE mechanism
+is *truthful*: a participant's dominant strategy is to report honestly.
 When agents do report truthfully, the PE mechanism returns a
 Lorenz-dominating allocation; that allocation has EFX, EF1, max Nash
 welfare, and max utilitarian welfare properties. (Those are
@@ -229,7 +225,7 @@ in for the negotiation, and the app stays silent.
 
 ```
 $ node test-fairdiv.mjs
-fairdiv: ~315 pass, 0 fail
+fairdiv: 339 pass, 0 fail
 ```
 
 `test-fairdiv.mjs` runs through Node 24's native TypeScript type-stripping
@@ -254,7 +250,7 @@ $ node e2e.cjs
 
 The Playwright end-to-end test runs against a built `dist/` server. It
 fills the ballots, clicks through allocation, opens the money card, asserts
-the post-settlement verdict renders, and confirms the localStorage
+the conversation prompts render, and confirms the localStorage
 contract from above.
 
 ## Tech
