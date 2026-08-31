@@ -74,7 +74,6 @@ type StringDict = {
   moneyAdd: string
   moneyCalc: string
   moneyRecalc: string
-  moneyNone: string
   moneyNote: string
   priceSheetHint: string
   priceSheetClose: string
@@ -230,10 +229,8 @@ export const STRINGS: Record<Lang, StringDict> = {
     moneyAdd: "+ Mở bảng giá",
     moneyCalc: "Gợi ý để thương lượng",
     moneyRecalc: "Gợi ý lại",
-    moneyNone:
-      "Món nhiều người cùng muốn không được app đề xuất — cả nhà thương lượng, tung đồng xu, hoặc luân phiên.",
     moneyNote:
-      "Tiền không nằm trong kết quả của bài báo gốc — đây là công cụ thương lượng của app, không phải phần của bảo đảm toán học. Giá do cả nhà chốt trước khi bỏ phiếu, nên mọi người cùng nhìn thấy cùng một con số tham khảo. Món nhiều người cùng muốn thì app không đề xuất hướng giải quyết; cả nhà tự quyết.",
+      "Tiền không nằm trong kết quả của bài báo gốc — đây là công cụ thương lượng của app, không phải phần của bảo đảm toán học. Giá do cả nhà chốt trước khi bỏ phiếu, nên mọi người cùng nhìn thấy cùng một con số tham khảo.",
     priceSheetHint:
       "Mở nếu có khả năng sẽ tranh chấp. Cả nhà cùng chốt giá tham khảo cho từng món NGAY BÂY GIỜ, trước khi bỏ phiếu — vì giá chốt sau khi biết ai ghen ai sẽ làm cuộc thương lượng sau đó kém minh bạch. Bỏ trống cũng được; bạn có thể quay lại bước này bất cứ lúc nào.",
     priceSheetClose: "Đóng bảng giá",
@@ -408,10 +405,8 @@ export const STRINGS: Record<Lang, StringDict> = {
     moneyAdd: "+ Open the price sheet",
     moneyCalc: "Show prompts",
     moneyRecalc: "Re-list",
-    moneyNone:
-      "Items several people wanted are not proposed on by the app — the household negotiates, coin-flips, or takes turns.",
     moneyNote:
-      "Cash is not part of the original paper's result — it's a negotiation tool this app adds, not part of the mathematical guarantee. Prices are agreed by everyone before voting, so everyone is talking from the same reference numbers. Items several people wanted have no app-side proposal; that call is the household's.",
+      "Cash is not part of the original paper's result — it's a negotiation tool this app adds, not part of the mathematical guarantee. Prices are agreed by everyone before voting, so everyone is talking from the same reference numbers.",
     priceSheetHint:
       "Open this if a dispute is likely. Agree on a reference price for each item NOW, before anyone votes — prices set after you know who envies whom would make the later bargaining less transparent. Leaving it empty is fine; you can come back to this step at any time.",
     priceSheetClose: "Close the price sheet",

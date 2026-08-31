@@ -274,7 +274,7 @@ src/
   App.tsx              # single-file UI, all surfaces (ballot, results, money)
   lib/fairdiv.ts       # the engine: allocate / verify / discuss
   components/ui/       # shadcn primitives on @base-ui/react
-test-fairdiv.mjs       # property test for the engine (~315 assertions)
+test-fairdiv.mjs       # property test for the engine (each run should pass, 0 fail)
 e2e.cjs                # Playwright end-to-end + privacy-by-design check
 shots/                 # rendered screenshots referenced from the UI
 public/
