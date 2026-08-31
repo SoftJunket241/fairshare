@@ -345,6 +345,9 @@ function TopBar({
         <StepDot active={idx === 1} done={idx > 1} label={t.nav2} />
         <StepDot active={idx === 2} done={false} label={t.nav3} />
       </nav>
+      <span className="sm:hidden text-[11px] font-medium text-muted-foreground">
+        {idx + 1}/3 — {[t.nav1.split("·")[1]?.trim() || t.nav1, t.nav2.split("·")[1]?.trim() || t.nav2, t.nav3.split("·")[1]?.trim() || t.nav3][idx]}
+      </span>
       <div className="ml-auto flex items-center gap-1">
         <div className="flex overflow-hidden rounded-md border border-border text-[11px] font-medium">
           <button

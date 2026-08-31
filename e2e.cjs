@@ -189,6 +189,17 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  FAIL ") + m); if (!c) f
   check(!lowerP.includes("pays") && !lowerP.includes("transfer") && !lowerP.includes("settlement"), "no executable payment language in prompts card");
   await fullPageShot(page, "r08-contested.png");
 
+  console.log("== MOBILE VIEWPORT ==");
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.waitForTimeout(200);
+  const mobileStep = await page.locator("header span.sm\\:hidden").first();
+  check(await mobileStep.isVisible(), "mobile step indicator visible at 375px");
+  const mobileStepText = await mobileStep.innerText();
+  check(mobileStepText.includes("1/3") || mobileStepText.includes("2/3") || mobileStepText.includes("3/3"), "mobile step text shows N/3");
+  await fullPageShot(page, "r09-mobile.png");
+  await page.setViewportSize({ width: 900, height: 1100 });
+  await page.waitForTimeout(200);
+
   console.log("== ERRORS ==");
   check(errors.length === 0, `no JS errors (${errors.length})`);
   errors.forEach((e) => console.log("   " + e));
